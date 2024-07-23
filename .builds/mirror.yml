@@ -1,0 +1,14 @@
+image: alpine/latest
+sources:
+  - git@git.sr.ht:~jamesaorson/reformer
+environment:
+  TARGET: git@github.com/exokomodo/reformer
+# https://builds.sr.ht/secrets
+secrets:
+  # NOTE: github-ssh-key:
+  - 6d1be687-6726-4733-a69a-a6d75fe21d85
+tasks:
+  - add-remote: |-
+      git remote add target ${TARGET}
+  - mirror: |-
+      git push --force target --tags "refs/remotes/origin/*:refs/heads/*"
