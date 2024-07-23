@@ -1,3 +1,4 @@
+.DEFAULT_GOAL := help
 
 ##@ Setup
 setup-osx: sbcl-brew quicklisp slime ## Sets up a Mac
