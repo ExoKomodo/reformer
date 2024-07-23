@@ -15,6 +15,9 @@ tasks:
         User git
         IdentityFile ~/.ssh/6d1be687-6726-4733-a69a-a6d75fe21d85
       EOF
+  - ssh-keyscan: |-
+      touch ~/.ssh/known_hosts
+      ssh-keyscan github.com >> ~/.ssh/known_hosts
   - add-remote: |-
       cd reformer
       git remote add target ${TARGET}
