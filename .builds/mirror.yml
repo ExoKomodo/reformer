@@ -2,7 +2,7 @@ image: alpine/latest
 sources:
   - git@git.sr.ht:~jamesaorson/reformer
 environment:
-  TARGET: git@github.com/exokomodo/reformer
+  TARGET: git@github.com:exokomodo/reformer
 # https://builds.sr.ht/secrets
 secrets:
   # NOTE: github-ssh-key:
