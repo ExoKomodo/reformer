@@ -8,7 +8,7 @@ secrets:
   # NOTE: github-ssh-key:
   - 6d1be687-6726-4733-a69a-a6d75fe21d85
 tasks:
-  - setup-ssh-config: |-
+  - ssh-config: |-
       touch ~/.ssh/config
       cat <<EOF >> ~/.ssh/config
       Host github.com
