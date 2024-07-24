@@ -22,3 +22,4 @@ Have info about:
 - the purpose of the website.
 - technologies chosen (and why).
 - the development process.
+
