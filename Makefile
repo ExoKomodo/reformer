@@ -2,11 +2,19 @@
 
 UNAME_S := $(shell uname -s)
 
+ENTRYPOINT := init.scm
+
+INIT_SOURCES := $(wildcard *.scm)
+
+SOURCES := $(wildcard reformer/*.scm)
+
 ##@ Project
 .PHONY: run
-run: ## Run the project. Assumes setup is complete.
-	sbcl \
-		--script ./init.lisp
+run: $(INIT_SOURCES) $(SOURCES) ## Run the project. Assumes setup is complete.
+	guile \
+	-L $$(pwd) \
+	-s \
+		$(ENTRYPOINT)
 
 ##@ Setup
 .PHONY: setup
@@ -30,53 +38,28 @@ else
 endif
 
 .PHONY: setup-arch
-setup-arch: sbcl-pacman quicklisp slime ## Sets up an Arch machine
+setup-arch: guile-pacman ## Sets up an Arch machine
 .PHONY: setup-debian
-setup-debian: sbcl-apt quicklisp slime ## Sets up a Debian-based machine
+setup-debian: guile-apt ## Sets up a Debian-based machine
 .PHONY: setup-fedora
-setup-fedora: sbcl-dnf quicklisp slime ## Sets up a Fedora machine
+setup-fedora: guile-dnf ## Sets up a Fedora machine
 .PHONY: setup-osx
-setup-osx: sbcl-brew quicklisp slime ## Sets up a Mac machine
+setup-osx: guile-brew ## Sets up a Mac machine
 
-.PHONY: sbcl-apt
-sbcl-apt: ## Install SBCL via APT
-	sudo apt-get install -y sbcl
-.PHONY: sbcl-brew
-sbcl-brew: ## Install SBCL via Homebrew (https://brew.sh)
-	brew install sbcl
-.PHONY: sbcl-dnf
-sbcl-dnf: ## Install SBCL via DNF
-	sudo dnf install -y sbcl
-.PHONY: sbcl-pacman
-sbcl-pacman: ## Install SBCL via Pacman
-	sudo pacman -S sbcl
-
-.PHONY: quicklisp
-quicklisp: ## Install Quicklisp
-	if [ -d ~/.quicklisp ]; then \
-		exit 0; \
-	fi; \
-	curl -o /tmp/ql.lisp http://beta.quicklisp.org/quicklisp.lisp; \
-	sbcl \
-		--no-sysinit --no-userinit \
-		--load /tmp/ql.lisp \
-		--eval '(quicklisp-quickstart:install :path "~/.quicklisp")' \
-		--eval '(ql:add-to-init-file)' \
-		--quit
-
-.PHONY: slime
-slime: ## Install SLIME
-	sbcl --eval '(ql:quickload :quicklisp-slime-helper)' --quit
+.PHONY: guile-apt
+guile-apt: ## Install guile via APT
+	sudo apt-get install -y guile
+.PHONY: guile-brew
+guile-brew: ## Install guile via Homebrew (https://brew.sh)
+	brew install guile
+.PHONY: guile-dnf
+guile-dnf: ## Install guile via DNF
+	sudo dnf install -y guile
+.PHONY: guile-pacman
+guile-pacman: ## Install guile via Pacman
+	sudo pacman -S guile
 
 ##@ Utility
-.PHONY: asdf-version
-asdf-version: ## Print ASDF version
-	sbcl \
-		--noinform \
-		--disable-debugger \
-		--eval '(require :asdf)' \
-		--eval '(format t "ASDF: ~a~%" (asdf:asdf-version))' \
-		--quit
 
 .PHONY: help
 help: ## Displays help info
