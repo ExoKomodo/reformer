@@ -1,16 +1,18 @@
 UNAME_S := $(shell uname -s)
 
-ENTRYPOINT := init.scm
+ENTRYPOINT := src/init.scm
 
-INIT_SOURCES := $(wildcard *.scm)
+SOURCE_DIR := $(shell pwd)/src
 
-SOURCES := $(wildcard reformer/*.scm)
+INIT_SOURCES := $(wildcard src/*.scm)
+
+SOURCES := $(wildcard src/reformer/*.scm)
 
 ##@ Project
 .PHONY: run
 run: $(INIT_SOURCES) $(SOURCES) ## Run the project. Assumes setup is complete.
 	guile \
-	-L $$(pwd) \
+	-L $(SOURCE_DIR) \
 	-s \
 		$(ENTRYPOINT)
 
