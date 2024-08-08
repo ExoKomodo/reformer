@@ -1,5 +1,3 @@
-.DEFAULT_GOAL := help
-
 UNAME_S := $(shell uname -s)
 
 ENTRYPOINT := init.scm
