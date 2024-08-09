@@ -31,4 +31,8 @@
 ;;   - Running more than one instance on the same port will fail
 ;; Error Handling: '()
 (define (cfrr)
-  (run-server (lambda (request request-body) (router request request-body))))
+  (run-server
+    (lambda (request request-body) (router request request-body))
+    'http
+    '(#:host "0.0.0.0"
+      #:port 8081)))

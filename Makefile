@@ -1,4 +1,5 @@
 UNAME_S := $(shell uname -s)
+UNAME_M := $(shell uname -m)
 
 ENTRYPOINT := src/init.scm
 
@@ -12,9 +13,9 @@ SOURCES := $(wildcard src/reformer/*.scm)
 .PHONY: run
 run: $(INIT_SOURCES) $(SOURCES) ## Run the project. Assumes setup is complete.
 	guile \
-	-L $(SOURCE_DIR) \
-	-s \
-		$(ENTRYPOINT)
+		-L $(SOURCE_DIR) \
+		-s \
+			$(ENTRYPOINT)
 
 ##@ Setup
 .PHONY: setup
@@ -48,18 +49,45 @@ setup-osx: guile-brew ## Sets up a Mac machine
 
 .PHONY: guile-apt
 guile-apt: ## Install guile via APT
-	sudo apt-get install -y guile
+	apt-get update -y
+	if ! apt-get install -y guile-3.0; then \
+		apt-get install -y guile; \
+	fi
 .PHONY: guile-brew
 guile-brew: ## Install guile via Homebrew (https://brew.sh)
 	brew install guile
 .PHONY: guile-dnf
 guile-dnf: ## Install guile via DNF
-	sudo dnf install -y guile
+	dnf install -y guile
 .PHONY: guile-pacman
 guile-pacman: ## Install guile via Pacman
-	sudo pacman -S guile
+	pacman -S guile
 
-##@ Utility
+##@ Development
+
+.PHONY: repl
+repl: ## Runs a REPL that can load the project
+	guile \
+		-L $(SOURCE_DIR)
+
+CONTAINER_NAME ?= reformer
+CONTAINER_TAG ?= latest
+
+.PHONY: container-build
+container-build: ## Builds the container
+ifeq ($(UNAME_M), arm64)
+	docker buildx build --platform linux/amd64 . \
+	--tag $(CONTAINER_NAME):$(CONTAINER_TAG) \
+	--load
+else
+	docker build . \
+	--tag $(CONTAINER_NAME):$(CONTAINER_TAG)
+endif
+
+.PHONY: container-run
+container-run: ## Runs the latest container
+	docker run -it -p 8080:8080 \
+		$(CONTAINER_NAME):$(CONTAINER_TAG)
 
 .PHONY: help
 help: ## Displays help info
