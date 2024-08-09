@@ -5,7 +5,7 @@ name: reformer
 region: sfo
 services:
 - github:
-    branch: deploy
+    branch: main
     deploy_on_push: true
     repo: ExoKomodo/reformer
   http_port: 8080
