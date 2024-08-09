@@ -33,11 +33,14 @@ tasks:
     TIMESTAMP=$(date +%Y%m%d%H%M%S)
     BRANCH=${GIT_REF#refs/heads/}
     TIME_TAG=${BRANCH}-${TIMESTAMP}
-    export CONTAINER_TAG=${TIME_TAG}
+    CONTAINER_TAG=${TIME_TAG}
+    ADDITIONAL_CONTAINER_BUILD_ARGS=""
     if [ "${GIT_REF}" = "refs/heads/main" ]; then
-      export ADDITIONAL_CONTAINER_BUILD_ARGS="--tag ${USERNAME}/reformer:latest"
+      ADDITIONAL_CONTAINER_BUILD_ARGS="--tag ${USERNAME}/reformer:latest"
     fi
-    sudo make container-build
+    sudo make container-build \
+      CONTAINER_TAG=${CONTAINER_TAG} \
+      ADDITIONAL_CONTAINER_BUILD_ARGS="${ADDITIONAL_CONTAINER_BUILD_ARGS}"
 - push: |-
     cd reformer
     sudo make container-push-all
