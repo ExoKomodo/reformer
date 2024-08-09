@@ -5,7 +5,7 @@ name: reformer
 region: sfo
 services:
 - github:
-    branch: main
+    branch: deploy
     deploy_on_push: true
     repo: ExoKomodo/reformer
   envs:
