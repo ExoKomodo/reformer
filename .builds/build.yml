@@ -1,0 +1,43 @@
+image: alpine/latest
+packages:
+- docker
+- openrc
+- sudo
+secrets:
+# dockerhub access token
+- 024dec02-ae4c-468e-a764-1b0806498524
+environment:
+  CRI: sudo docker
+  IMAGE_NAME: docker.io/exokomodo/reformer
+  IMAGE_TAG: latest
+  USERNAME: exokomodo
+tasks:
+- docker-setup: |-
+    sudo rc-service cgroups start
+    if [[ ${CRI} == *'docker' ]]; then
+      sudo service docker start
+      sleep 1
+    fi
+    sleep 1
+- system-check: |-
+    ${CRI} --version
+    if [[ ${CRI} == *'docker' ]]; then
+      sudo service docker status
+    fi
+- login: |
+    cat ~/dockerhub-access-token | ${CRI} login docker.io \
+      --username ${USERNAME} \
+      --password-stdin
+- build: |-
+    cd reformer
+    TIMESTAMP=$(date +%Y%m%d%H%M%S)
+    BRANCH=${GIT_REF#refs/heads/}
+    TIME_TAG=${BRANCH}-${TIMESTAMP}
+    export CONTAINER_TAG=${TIME_TAG}
+    if [ "${GIT_REF}" = "refs/heads/main" ]; then
+      export ADDITIONAL_CONTAINER_BUILD_ARGS="--tag ${USERNAME}/reformer:latest"
+    fi
+    sudo make container-build
+- push: |-
+    cd reformer
+    sudo make container-push-all

@@ -5,10 +5,9 @@ name: reformer
 region: sfo
 services:
 - github:
-    branch: main
+    branch: deploy
     deploy_on_push: true
     repo: ExoKomodo/reformer
-  envs:
   http_port: 8080
   instance_count: 1
   instance_size_slug: basic-xxs

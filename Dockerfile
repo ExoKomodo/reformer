@@ -18,4 +18,6 @@ RUN make setup \
     && rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/*
 COPY ./src /app/src
 
+EXPOSE 8080
+
 CMD [ "make", "run" ]

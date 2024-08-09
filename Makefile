@@ -70,24 +70,43 @@ repl: ## Runs a REPL that can load the project
 	guile \
 		-L $(SOURCE_DIR)
 
-CONTAINER_NAME ?= reformer
-CONTAINER_TAG ?= latest
+CONTAINER_NAME ?= exokomodo/reformer
+CONTAINER_TAG ?= dev
+ADDITIONAL_CONTAINER_BUILD_ARGS ?= 
+ADDITIONAL_CONTAINER_PUSH_ARGS ?= 
 
 .PHONY: container-build
+container-build:
 container-build: ## Builds the container
 ifeq ($(UNAME_M), arm64)
 	docker buildx build --platform linux/amd64 . \
 	--tag $(CONTAINER_NAME):$(CONTAINER_TAG) \
-	--load
+	--load \
+	$(ADDITIONAL_CONTAINER_BUILD_ARGS)
 else
 	docker build . \
-	--tag $(CONTAINER_NAME):$(CONTAINER_TAG)
+	--tag $(CONTAINER_NAME):$(CONTAINER_TAG) \
+	$(ADDITIONAL_CONTAINER_BUILD_ARGS)
 endif
 
 .PHONY: container-run
-container-run: ## Runs the latest container
+container-run:
+container-run: ## Runs the container
 	docker run -it -p 8080:8080 \
 		$(CONTAINER_NAME):$(CONTAINER_TAG)
+
+.PHONY: container-push
+container-push: ## Pushes a specific tagged container
+	docker image push \
+		$(CONTAINER_NAME):$(CONTAINER_TAG) \
+		$(ADDITIONAL_CONTAINER_PUSH_ARGS)
+
+.PHONY: container-push-all
+container-push-all: ## Pushes all container tags
+	docker image push \
+		--all-tags \
+		$(CONTAINER_NAME) \
+		$(ADDITIONAL_CONTAINER_PUSH_ARGS)
 
 .PHONY: help
 help: ## Displays help info
