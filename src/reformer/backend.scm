@@ -16,7 +16,7 @@
       ((string=? "/" path)
         (set! visits (+ visits 1))
         (values '((content-type . (text/html)))
-            (format #f "<html><body><div>Hello World!</div> <div>Visit ~d</div></body></html>" visits)))
+            (format #f "<html><body><div>Hello World!</div> <div>Visit #~d</div></body></html>" visits)))
       (else
         (not-found request)))))
 
@@ -31,4 +31,4 @@
 ;;   - Running more than one instance on the same port will fail
 ;; Error Handling: '()
 (define (cfrr)
-  (run-server router))
+  (run-server (lambda (request request-body) (router request request-body))))
