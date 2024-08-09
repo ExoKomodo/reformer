@@ -31,7 +31,7 @@ tasks:
 - build: |-
     cd reformer
     TIMESTAMP=$(date +%Y%m%d%H%M%S)
-    BRANCH=$(git branch | sed -n -e 's/^\* \(.*\)/\1/p')
+    BRANCH=${GIT_REF#refs/heads/}
     TIME_TAG=${BRANCH}-${TIMESTAMP}
     export CONTAINER_TAG=${TIME_TAG}
     if [ "${GIT_REF}" = "refs/heads/main" ]; then
