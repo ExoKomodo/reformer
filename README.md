@@ -8,6 +8,8 @@
 
 ## Setup
 
+The site runs locally at [`http://localhost:8080`](https://localhost:8080), even from a container.
+
 To setup a system, `root` access is often required. So, if using `sudo`:
 
 ```shell
