@@ -17,6 +17,14 @@ run: $(INIT_SOURCES) $(SOURCES) ## Run the project. Assumes setup is complete.
 		-s \
 			$(ENTRYPOINT)
 
+.PHONY: run-with-lb
+run-with-lb: $(INIT_SOURCES) $(SOURCES) ## Run the project with the load balancer. Assumes setup is complete.
+	nginx; \
+	guile \
+		-L $(SOURCE_DIR) \
+		-s \
+			$(ENTRYPOINT)
+
 ##@ Setup
 .PHONY: setup
 setup: ## Detects the OS and runs the appropriate setup
@@ -92,7 +100,9 @@ endif
 .PHONY: container-run
 container-run:
 container-run: ## Runs the container
-	docker run -it -p 8080:8080 \
+	docker run -it \
+		-p 80:80 \
+		-p 8080:8080 \
 		$(CONTAINER_NAME):$(CONTAINER_TAG)
 
 .PHONY: container-push

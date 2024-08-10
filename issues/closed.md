@@ -1,5 +1,47 @@
 # Closed Issues
 
+## Setup Nginx
+
+### Branch - [setup-nginx](https://git.sr.ht/~jamesaorson/reformer/tree/setup-nginx)
+
+### Overview
+
+[`nginx`](https://nginx.org/en/) is a super simple load balancer/web server, which also serves static file serving.
+
+### Instructions
+
+Set up a simple nginx, with a proxy pass from port 80 to 8080
+
+Something like this
+
+```nginx
+server {
+  listen        80;
+
+  access_log /var/log/nginx/access.log;
+  error_log /var/log/nginx/error.log notice;
+  rewrite_log on;
+
+  location / {
+    proxy_http_version 1.1;
+    proxy_set_header   Upgrade $http_upgrade;
+    proxy_set_header   Connection keep-alive;
+    proxy_set_header   Host $host;
+    proxy_cache_bypass $http_upgrade;
+    proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header   X-Forwarded-Proto $scheme;
+
+    proxy_pass         http://0.0.0.0:8080;
+  }
+}
+```
+
+### Acceptance Criteria
+
+- Have nginx run on port 80
+- Have port 80 and 8080 exposing the same thing, but only 80 goes through the LB
+- Get Digital Ocean to pass through the LB port
+
 ## Public Domain
 
 ### Branch - [public-domain](https://git.sr.ht/~jamesaorson/reformer/tree/public-domain)
@@ -44,7 +86,6 @@ Where possible, we should store these documents local to this project. We intend
 
 - Create the [`external/docs/`](../external/docs) directory.
 - Link to this directory from the main [`README.md`](../README.md).
-
 
 ## Setup ASDF project
 

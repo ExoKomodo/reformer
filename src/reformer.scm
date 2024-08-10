@@ -2,6 +2,7 @@
   #:export (cfrr))
 
 (use-modules (web server)
+             (reformer config)
              (reformer routing))
 
 ;; Function: cfrr
@@ -15,8 +16,10 @@
 ;;   - Running more than one instance on the same port will fail
 ;; Error Handling: '()
 (define (cfrr)
+  (format #t "Reformer is running at ~s:~d~%" host port)
   (run-server
-    (lambda (request request-body) (router request request-body))
+    (lambda (request request-body)
+      (router request request-body))
     'http
-    '(#:host "0.0.0.0"
-      #:port 8080)))
+    `(#:host ,host
+      #:port ,port)))

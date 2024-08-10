@@ -8,9 +8,16 @@
 - [Source code mirror](https://github.com/exokomodo/reformer)
 - [External tool/library documentation](./external/docs/)
 
-## Setup
+## Architecture
 
-The site runs locally at [`http://localhost:8080`](https://localhost:8080), even from a container.
+This site runs on two ports in the production container, but one in local development.
+
+Locally, the site is at [`http://localhost:8080`](https://localhost:8080)
+
+In a container, [`http://localhost:80`](https://localhost:80) is the nginx entrypoint.
+If nginx is broken, use [`http://localhost:8080`](https://localhost:8080) to go directly to the running `cfrr`.
+
+## Setup
 
 To setup a system, `root` access is often required. So, if using `sudo`:
 
