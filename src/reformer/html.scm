@@ -6,7 +6,7 @@
 
 (define (html-page-template title body)
   `(html (head (title ,title))
-         (body ,@body)))
+         (body (@ (style "background-color: antiquewhite;")) ,@body)))
 
 (define* (html-page
   #:optional body #:key
