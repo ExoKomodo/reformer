@@ -16,7 +16,7 @@
 ;;   - Running more than one instance on the same port will fail
 ;; Error Handling: '()
 (define (cfrr)
-  (format #t "Reformer is running at ~s:~d~%" host port)
+  (format #t "Reformer is running - ~a://~a:~d~%" scheme host port)
   (run-server
     (lambda (request request-body)
       (router request request-body))
