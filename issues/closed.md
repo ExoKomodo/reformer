@@ -42,6 +42,27 @@ server {
 - Have port 80 and 8080 exposing the same thing, but only 80 goes through the LB
 - Get Digital Ocean to pass through the LB port
 
+## Setup hosting solution
+
+### Branch (n/a)
+
+### Overview
+
+Since the backend does SSR of the page, we need a hosting solution that will run the code and be routable,
+since we won't be generating static webpages.
+
+### Instructions
+
+1. Deploy to a hosting solution (Using Digital Ocean)
+1. Have a CD pipeline to automatically update the hosted site (builds a docker container on every push to main)
+
+### Acceptance Criteria
+
+- Automatically updated hosting site
+- Automatic SSL updates
+- Cheap
+
+
 ## Public Domain
 
 ### Branch - [public-domain](https://git.sr.ht/~jamesaorson/reformer/tree/public-domain)
