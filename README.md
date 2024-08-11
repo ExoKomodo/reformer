@@ -8,6 +8,11 @@
 - [Source code mirror](https://github.com/exokomodo/reformer)
 - [External tool/library documentation](./external/docs/)
 
+## Dev Videos
+
+- Development Workflow
+  - How to develop [`reformer.fyi`](https://www.reformer.fyi)
+
 ## Architecture
 
 This site runs on two ports in the production container, but one in local development.
