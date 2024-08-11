@@ -11,7 +11,7 @@
 ## Dev Videos
 
 - Development Workflow
-  - How to develop [`reformer.fyi`](https://www.reformer.fyi)
+  - How to develop [`reformer.fyi`](https://www.reformer.fyi) - [Video](https://youtu.be/HrwybAK6XY4)
 
 ## Architecture
 
