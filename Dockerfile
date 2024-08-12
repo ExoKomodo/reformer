@@ -8,19 +8,21 @@ RUN apt-get update -y \
         make \
         nginx \
         procps \
+        rsync \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/*
 
 COPY ./nginx/nginx.conf /etc/nginx/nginx.conf
 COPY ./Makefile /app/Makefile
 COPY ./external /app/external
+COPY ./www /var/www
 WORKDIR /app
 RUN make setup \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/*
 COPY ./src /app/src
 
-EXPOSE 80
+EXPOSE 88
 EXPOSE 8080
 
 CMD [ "make", "run-with-lb" ]

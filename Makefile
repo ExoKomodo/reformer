@@ -9,6 +9,8 @@ INIT_SOURCES := $(wildcard src/*.scm)
 
 SOURCES := $(wildcard src/reformer/*.scm)
 
+STATIC_DIR := www/reformer.fyi
+
 ##@ Project
 .PHONY: run
 run: $(INIT_SOURCES) $(SOURCES) ## Run the project. Assumes setup is complete.
@@ -18,8 +20,7 @@ run: $(INIT_SOURCES) $(SOURCES) ## Run the project. Assumes setup is complete.
 			$(ENTRYPOINT)
 
 .PHONY: run-with-lb
-run-with-lb: $(INIT_SOURCES) $(SOURCES) ## Run the project with the load balancer. Assumes setup is complete.
-	nginx; \
+run-with-lb: $(INIT_SOURCES) $(SOURCES) lb ## Run the project with the load balancer. Assumes setup is complete.
 	guile \
 		-L $(SOURCE_DIR) \
 		-s \
@@ -33,6 +34,18 @@ run-with-repl-server: $(INIT_SOURCES) $(SOURCES) ## Run the project with a REPL 
 		--listen=$(REPL_PORT) \
 		-s \
 			$(ENTRYPOINT)
+
+.PHONY: setup-lb
+setup-lb: ## Sets up the LB and syncs static content. Needs root access.
+	NGINX_CONF=$(shell nginx -V 2>&1 | grep -o '\-\-conf-path=\(.*conf\)' | cut -d '=' -f2); \
+	ln -s -f $(shell pwd)/nginx/nginx.conf $${NGINX_CONF}; \
+	mkdir -p /var/www/$(STATIC_DIR); \
+	rsync -avh --delete $(shell pwd)/$(STATIC_DIR)/ /var/$(STATIC_DIR); \
+	nginx -t
+
+.PHONY: lb
+lb: ## Runs the load balancer, enabling static content serving
+	nginx
 
 ##@ Setup
 .PHONY: setup
@@ -123,7 +136,7 @@ endif
 container-run:
 container-run: ## Runs the container
 	docker run -it \
-		-p 80:80 \
+		-p 88:88 \
 		-p 8080:8080 \
 		$(CONTAINER_NAME):$(CONTAINER_TAG)
 

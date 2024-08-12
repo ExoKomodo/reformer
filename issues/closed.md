@@ -10,13 +10,13 @@
 
 ### Instructions
 
-Set up a simple nginx, with a proxy pass from port 80 to 8080
+Set up a simple nginx, with a proxy pass from port 88 to 8080
 
 Something like this
 
 ```nginx
 server {
-  listen        80;
+  listen        88;
 
   access_log /var/log/nginx/access.log;
   error_log /var/log/nginx/error.log notice;
@@ -38,8 +38,8 @@ server {
 
 ### Acceptance Criteria
 
-- Have nginx run on port 80
-- Have port 80 and 8080 exposing the same thing, but only 80 goes through the LB
+- Have nginx run on port 88
+- Have port 88 and 8080 exposing the same thing, but only 88 goes through the LB
 - Get Digital Ocean to pass through the LB port
 
 ## Setup hosting solution

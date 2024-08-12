@@ -26,7 +26,7 @@ This site runs on two ports in the production container, but one in local develo
 
 Locally, the site is at [`http://localhost:8080`](https://localhost:8080)
 
-In a container, [`http://localhost:80`](https://localhost:80) is the nginx entrypoint.
+In a container, [`http://localhost:88`](https://localhost:88) is the nginx entrypoint.
 If nginx is broken, use [`http://localhost:8080`](https://localhost:8080) to go directly to the running `cfrr`.
 
 ## Setup
@@ -69,7 +69,7 @@ make setup
         (not-found request)))))
 ```
 
-1. Run `M-x compile` and execute` make -k run-with-repl-port`
+1. Run `M-x compile` and execute `make -k run-with-repl-server`
 1. Run `M-x geiser-connect`, default host, port `1689`
 1. Go to [`http://localhost:8080`](http://localhost:8080) and notice the incorrect pages. ![Wrong route for root page](./images/development-wrong-routes.png)
 1. Change the routing function back to what it was 
@@ -95,7 +95,6 @@ make setup
 1. Reload the router form with `C-x C-e`
 1. Refresh the browser and witness the live change ![Correct routes](./images/development-correct-routes.png)
 
-
 ### Locally
 
 #### Without a load balancer and reverse proxy
@@ -105,6 +104,14 @@ make run
 ```
 
 #### With a load balancer and reverse proxy
+
+Install `nginx` on your system, then run
+
+```shell
+make setup-lb
+```
+
+After that, you should be able to use
 
 ```shell
 make run-with-lb

@@ -5,8 +5,11 @@
              (sxml simple))
 
 (define (html-page-template title body)
-  `(html (head (title ,title))
-         (body (@ (style "background-color: antiquewhite;")) ,@body)))
+  `(html (head (title ,title)
+               (link (@ (rel "stylesheet")
+                        (href "/static/css/index.css"))))
+         (body (@ (class "theme antique"))
+               ,@body)))
 
 (define* (html-page
   #:optional body #:key
