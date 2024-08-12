@@ -25,6 +25,15 @@ run-with-lb: $(INIT_SOURCES) $(SOURCES) ## Run the project with the load balance
 		-s \
 			$(ENTRYPOINT)
 
+.PHONY: run-with-repl-server
+run-with-repl-server: REPL_PORT ?= 1689
+run-with-repl-server: $(INIT_SOURCES) $(SOURCES) ## Run the project with a REPL server exposed
+	guile \
+		-L $(SOURCE_DIR) \
+		--listen=$(REPL_PORT) \
+		-s \
+			$(ENTRYPOINT)
+
 ##@ Setup
 .PHONY: setup
 setup: ## Detects the OS and runs the appropriate setup
@@ -55,6 +64,8 @@ setup-fedora: guile-dnf ## Sets up a Fedora machine
 .PHONY: setup-osx
 setup-osx: guile-brew ## Sets up a Mac machine
 
+##@ Guile install
+
 .PHONY: guile-apt
 guile-apt: ## Install guile via APT
 	apt-get update -y
@@ -71,12 +82,23 @@ guile-dnf: ## Install guile via DNF
 guile-pacman: ## Install guile via Pacman
 	pacman -S guile
 
-##@ Development
+##@ REPL
 
 .PHONY: repl
-repl: ## Runs a REPL that can load the project
+repl: repl-with-port ## Runs a REPL that can load the project
+
+.PHONY: repl-with-port
+repl-with-port: ## Runs a REPL that can load the project, with an open REPL port
+	guile \
+		-L $(SOURCE_DIR) \
+		--listen=$(REPL_PORT)
+
+.PHONY: repl-no-port
+repl-no-port: ## Runs a REPL that can load the project, without an open REPL port
 	guile \
 		-L $(SOURCE_DIR)
+
+##@ Container
 
 CONTAINER_NAME ?= exokomodo/reformer
 CONTAINER_TAG ?= dev
@@ -117,6 +139,8 @@ container-push-all: ## Pushes all container tags
 		--all-tags \
 		$(CONTAINER_NAME) \
 		$(ADDITIONAL_CONTAINER_PUSH_ARGS)
+
+##@ Help
 
 .PHONY: help
 help: ## Displays help info

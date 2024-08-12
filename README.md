@@ -36,22 +36,74 @@ And if not:
 make setup
 ```
 
-## Running
+## Development
 
-### As in production
+### Live Reload (Preferred way)
+
+1. Say you open Emacs
+1. Open the project
+1. Change [`src/reformer/routing.scm:router`](./src/reformer/routing.scm) to the following, to simulate a bug
+
+```scheme
+(define (router request request-body)
+  (log-request request)
+  (let ((path (uri->string (request-uri request))))
+    (cond
+      ((string=? "/feed" path)
+        (set! visits (+ visits 1))
+        (home:index visits))
+      ((string=? "/" path)
+        (set! visits (+ visits 1))
+        (feed:index))
+      ((string=? "/about" path)
+        (set! visits (+ visits 1))
+        (about:index))
+      (else
+        (not-found request)))))
+```
+
+1. Run `M-x compile` and execute` make -k run-with-repl-port`
+1. Run `M-x geiser-connect`, default host, port `1689`
+1. Go to [`http://localhost:8080`](http://localhost:8080) and notice the incorrect pages. ![Wrong route for root page](./images/development-wrong-routes.png)
+1. Change the routing function back to what it was 
+
+```scheme
+(define (router request request-body)
+  (log-request request)
+  (let ((path (uri->string (request-uri request))))
+    (cond
+      ((string=? "/" path)
+        (set! visits (+ visits 1))
+        (home:index visits))
+      ((string=? "/feed" path)
+        (set! visits (+ visits 1))
+        (feed:index))
+      ((string=? "/about" path)
+        (set! visits (+ visits 1))
+        (about:index))
+      (else
+        (not-found request))))) ;; Run C-x C-e on this form
+```
+
+1. Reload the router form with `C-x C-e`
+1. Refresh the browser and witness the live change ![Correct routes](./images/development-correct-routes.png)
+
+
+### Locally
+
+#### Without a load balancer and reverse proxy
 
 ```shell
 make run
 ```
 
-### In a REPl
+#### With a load balancer and reverse proxy
 
 ```shell
-make repl
-# Now either (use-module) or copy-paste relevant code to the repl
+make run-with-lb
 ```
 
-### In a container
+### Containerized
 
 ```shell
 make container-build container-run
