@@ -10,9 +10,9 @@
 
 ## Pipeline Status
 
-[![Build status](https://builds.sr.ht/~jamesaorson/reformer/commits/main/build.yml.svg)](https://builds.sr.ht/~jamesaorson/reformer/commits/main/build.yml)
+- Build [![Build status](https://builds.sr.ht/~jamesaorson/reformer/commits/main/build.yml.svg)](https://builds.sr.ht/~jamesaorson/reformer/commits/main/build.yml)
 
-[![Git mirror status](https://builds.sr.ht/~jamesaorson/reformer/commits/main/mirror.yml.svg)](https://builds.sr.ht/~jamesaorson/reformer/commits/main/mirror.yml)
+- Mirror [![Git mirror status](https://builds.sr.ht/~jamesaorson/reformer/commits/main/mirror.yml.svg)](https://builds.sr.ht/~jamesaorson/reformer/commits/main/mirror.yml)
 
 
 ## Dev Videos
