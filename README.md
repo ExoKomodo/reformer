@@ -8,6 +8,13 @@
 - [Source code mirror](https://github.com/exokomodo/reformer)
 - [External tool/library documentation](./external/docs/)
 
+## Pipeline Status
+
+[![Build status](https://builds.sr.ht/~jamesaorson/reformer/commits/main/build.yml.svg)](https://builds.sr.ht/~jamesaorson/reformer/commits/main/build.yml)
+
+[![Git mirror status](https://builds.sr.ht/~jamesaorson/reformer/commits/main/mirror.yml.svg)](https://builds.sr.ht/~jamesaorson/reformer/commits/main/mirror.yml)
+
+
 ## Dev Videos
 
 - Development Workflow
