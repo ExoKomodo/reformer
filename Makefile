@@ -39,8 +39,9 @@ run-with-repl-server: $(INIT_SOURCES) $(SOURCES) ## Run the project with a REPL 
 setup-lb: ## Sets up the LB and syncs static content. Needs root access.
 	NGINX_CONF=$(shell nginx -V 2>&1 | grep -o '\-\-conf-path=\(.*conf\)' | cut -d '=' -f2); \
 	ln -s -f $(shell pwd)/nginx/nginx.conf $${NGINX_CONF}; \
-	mkdir -p /var/www/$(STATIC_DIR); \
-	rsync -avh --delete $(shell pwd)/$(STATIC_DIR)/ /var/$(STATIC_DIR); \
+	mkdir -p /var/www; \
+	ln -s -f $(shell pwd)/$(STATIC_DIR)/ /var/$(STATIC_DIR); \
+	# rsync -avh --delete $(shell pwd)/$(STATIC_DIR)/ /var/$(STATIC_DIR); \
 	nginx -t
 
 .PHONY: lb
@@ -138,6 +139,9 @@ container-run: ## Runs the container
 	docker run -it \
 		-p 88:88 \
 		-p 8080:8080 \
+		--mount type=bind,source="$(shell pwd)/www",target=/var/www \
+		--mount type=bind,source="$(shell pwd)/src",target=/app/src \
+		--mount type=bind,source="$(shell pwd)/nginx",target=/app/nginxc \
 		$(CONTAINER_NAME):$(CONTAINER_TAG)
 
 .PHONY: container-push

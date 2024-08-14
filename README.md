@@ -14,7 +14,6 @@
 
 - Mirror [![Git mirror status](https://builds.sr.ht/~jamesaorson/reformer/commits/main/mirror.yml.svg)](https://builds.sr.ht/~jamesaorson/reformer/commits/main/mirror.yml)
 
-
 ## Dev Videos
 
 - Development Workflow
@@ -72,7 +71,7 @@ make setup
 1. Run `M-x compile` and execute `make -k run-with-repl-server`
 1. Run `M-x geiser-connect`, default host, port `1689`
 1. Go to [`http://localhost:8080`](http://localhost:8080) and notice the incorrect pages. ![Wrong route for root page](./images/development-wrong-routes.png)
-1. Change the routing function back to what it was 
+1. Change the routing function back to what it was.
 
 ```scheme
 (define (router request request-body)
@@ -128,3 +127,6 @@ or using bash magic
 ```bash
 make container-{build,run}
 ```
+
+`make container-run` will live load the relevant application code from your git repo into the container, via a volume,
+allowing for live reloads.
