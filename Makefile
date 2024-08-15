@@ -17,6 +17,9 @@ run: $(INIT_SOURCES) $(SOURCES) ## Run the project. Assumes setup is complete.
 		-s \
 			$(ENTRYPOINT)
 
+.PHONY: run-in-emacs
+run-in-emacs: lb run-with-repl-server
+
 .PHONY: run-with-lb
 run-with-lb: $(INIT_SOURCES) $(SOURCES) lb ## Run the project with the load balancer. Assumes setup is complete.
 	guile \
