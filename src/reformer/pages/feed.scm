@@ -18,15 +18,17 @@
                  (content . "Lorem ipsum odor amet, consectetuer adipiscing elit.")
                  (poster . ((handle . "SomeGuy"))))))
 
-(define (post-get-content post)
+(define (get-content post)
   (get-field 'content post))
 
-(define (post-get-name post)
+(define (get-name post)
   (get-field 'name post))
 
-(define (post-get-poster-handle post)
-  (get-field 'handle
-             (get-field 'poster post)))
+(define (get-poster post)
+  (get-field 'poster post))
+
+(define (get-handle post)
+  (get-field 'handle (get-poster post)))
 
 (define (index)
   (html-page
@@ -36,8 +38,8 @@
      ,(map 
        (lambda (post)
          `(div
-           (h3 ,(post-get-name post))
-           (p ,(post-get-content post))
-           (h4 ,(format #f "@~a" (post-get-poster-handle post)))
+           (h3 ,(get-name post))
+           (p ,(get-content post))
+           (h4 ,(format #f "@~a" (get-handle post)))
            ))
        posts))))
