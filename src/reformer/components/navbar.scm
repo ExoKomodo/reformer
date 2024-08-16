@@ -8,13 +8,11 @@
              (sxml simple))
 
 (define (navbar)
-  `((ul
-      (li
-        (a (@ (href "/"))
-            "Home"))
-      (li
-        (a (@ (href "/feed"))
-            "Feed"))
-      (li
-        (a (@ (href "/about"))
-            "About")))))
+  `((div (@ (class "theme antique navbar"))
+         (ul
+          (li (a (@ (href "/"))
+                 "Home"))
+          (li (a (@ (href "/feed"))
+                 "Feed"))
+          (li (a (@ (href "/about"))
+                 "About"))))))

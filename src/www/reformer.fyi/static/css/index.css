@@ -1,3 +1,68 @@
-body.theme.antique {
-    background-color: antiquewhite;
+:root {
+  --theme-antique-bg-1-color: #D9D5C1;
+  --theme-antique-header-color: #8C3C2A;
+  --theme-antique-button-color: #0C0B0D;
+  --theme-antique-bg-2-color: #BFBCAA;
+  --theme-antique-alert-color: #8C2920;
+  --theme-antique-link-visited-color: darkslateblue;
+  --theme-antique-link-unvisited-color: darkslategrey;
 }
+
+a:link {
+    color: var(--theme-antique-link-unvisited-color);
+}
+a:visited {
+    color: var(--theme-antique-link-visited-color);
+}
+
+body.theme.antique {
+    background-color: var(--theme-antique-bg-1-color);
+}
+
+.theme.antique.navbar ul {
+    /* Turn off list styling in navbar */
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: var(--theme-antique-header-color);
+}
+
+.navbar li {
+    /* Align the first element to the front of the list */
+    float: left;
+}
+
+.navbar li a, .navbar li div {
+    /* Renders navbar items horizontally, as boxes */
+    display: block;
+    text-align: center;
+    padding: 16px;
+}
+
+/*
+Navbar link
+*/
+.navbar li a {
+    color: inherit;
+    text-decoration: none;
+    border-style: solid;
+    border-top-width: 0.2rem;
+    border-bottom-width: 0.2rem;
+    border-left-width: 0.0rem;
+    border-right-width: 0.2rem;
+    background-color: var(--theme-antique-bg-2-color);
+}
+.navbar li:first-of-type a {
+    border-left-width: 0.2rem;
+}
+.theme.antique.navbar li a {
+    transition: background-color 0.5s;
+    border-color: var(--theme-antique-button-color);
+}
+
+.theme.antique.navbar li a:hover {
+    transition: background-color 0.5s;
+    background-color: var(--theme-antique-bg-1-color);
+}
+

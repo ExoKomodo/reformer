@@ -34,7 +34,7 @@
 (define (index)
   (let ((loaded-posts (load-posts dummy-posts)))
     (html-page
-     `(,(navbar)
+     `(,((lambda () (navbar)))
        (h1 (a (@ (href "/feed"))
               "Reformer Feed"))
        ,(map
