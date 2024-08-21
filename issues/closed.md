@@ -2,7 +2,7 @@
 
 ## Setup Nginx
 
-### Branch - [setup-nginx](https://git.sr.ht/~jamesaorson/reformer/tree/setup-nginx)
+### Branch - [setup-nginx](https://github.com/exokomodo/reformer/tree/setup-nginx)
 
 ### Overview
 
@@ -64,7 +64,7 @@ since we won't be generating static webpages.
 
 ## Public Domain
 
-### Branch - [public-domain](https://git.sr.ht/~jamesaorson/reformer/tree/public-domain)
+### Branch - [public-domain](https://github.com/exokomodo/reformer/tree/public-domain)
 
 ### Overview
 
@@ -89,7 +89,7 @@ a legal notice, here is a blessing:
 
 ## Add directory for external docs
 
-### Branch - [external-docs](https://git.sr.ht/~jamesaorson/reformer/tree/external-docs)
+### Branch - [external-docs](https://github.com/exokomodo/reformer/tree/external-docs)
 
 ### Overview
 
@@ -109,7 +109,7 @@ Where possible, we should store these documents local to this project. We intend
 
 ## Setup ASDF project
 
-### Branch - [setup-asdf](https://git.sr.ht/~jamesaorson/reformer/tree/setup-asdf)
+### Branch - [setup-asdf](https://github.com/exokomodo/reformer/tree/setup-asdf)
 
 ### Overview
 
@@ -127,7 +127,7 @@ Set up the base project/system definition required by `ASDF`, and store the docs
 
 ## Serve static files
 
-### Branch - [static-files](https://git.sr.ht/~jamesaorson/reformer/tree/static-files)
+### Branch - [static-files](https://github.com/exokomodo/reformer/tree/static-files)
 
 ### Overview
 
@@ -147,7 +147,7 @@ so you can get the static files for the site
 
 ## Live reloading
 
-### Branch - [nginx-live-reload](https://git.sr.ht/~jamesaorson/reformer/tree/nginx-live-reload)
+### Branch - [nginx-live-reload](https://github.com/exokomodo/reformer/tree/nginx-live-reload)
 
 ### Overview
 
@@ -167,3 +167,23 @@ work, but a `Permission Denied` error happens because of the non-root `nginx` pr
 ### Bonus
 
 Was able to add volume mounts to the local makefile run, as to allow for live development with the container.
+
+## Load and store data in SQLite
+
+### Branch - [setup-sqlite](https://github.com/exokomodo/reformer/tree/setup-sqlite)
+
+### Overview
+
+Add a SQLite database to Reformer, for storing persistent data and allowing for us to be stateless.
+
+### Instructions
+
+1. Add a makefile target for installing sqlite
+1. Create sqlite db on reformer startup
+
+### Acceptance Criteria
+
+- New developers should be able to run `make setup` and receive `sqlite` properly installed
+- Restarting a running app should come back up with prior state.
+  - Test this locally for now
+
