@@ -1,0 +1,14 @@
+{
+    "recommendations": [
+        "ailisp.strict-paredit",
+        "bierner.color-info",
+        "gruntfuggly.todo-tree",
+        "naumovs.color-highlight",
+        "qwtel.sqlite-viewer",
+        "sjhuangx.vscode-scheme",
+        "streetsidesoftware.code-spell-checker",
+        "tyriar.sort-lines",
+        "wayou.vscode-todo-highlight",
+        "william-voyek.vscode-nginx",
+    ]
+}

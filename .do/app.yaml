@@ -1,18 +1,24 @@
 domains:
-- domain: www.reformer.fyi
+- domain: dev.reformer.fyi
   type: PRIMARY
+ingress:
+  rules:
+  - component:
+      name: reformer
+    match:
+      path:
+        prefix: /
 name: reformer
 region: sfo
 services:
-- github:
-    branch: main
+- dockerfile_path: Dockerfile
+  github:
+    branch: setup-sqlite
     deploy_on_push: true
     repo: ExoKomodo/reformer
-  http_port: 88
+  http_port: 80
   instance_count: 1
   instance_size_slug: basic-xxs
   name: reformer
-  routes:
-  - path: /
-  dockerfile_path: Dockerfile
-  source_dir: .
+  source_dir: /
+

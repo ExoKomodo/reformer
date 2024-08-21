@@ -3,33 +3,33 @@ UNAME_M := $(shell uname -m)
 
 ENTRYPOINT := src/init.scm
 
-SOURCE_DIR := $(shell pwd)/src
+CWD := $(shell pwd)
+SOURCE_DIR := $(CWD)/src
 
 INIT_SOURCES := $(wildcard src/*.scm)
 
 SOURCES := $(wildcard src/reformer/*.scm)
 
+SQLITE_LIBRARY_PATH ?= libsqlite3
+
+.ONESHELL:
+
 ##@ Project
 .PHONY: run
 run: $(INIT_SOURCES) $(SOURCES) ## Run the project. Assumes setup is complete.
+	export SQLITE_LIBRARY_PATH=$(SQLITE_LIBRARY_PATH); \
 	guile \
 		-L $(SOURCE_DIR) \
 		-s \
 			$(ENTRYPOINT)
 
-.PHONY: run-in-emacs
-run-in-emacs: lb run-with-repl-server
+.PHONY: run-on-server
+run-on-server: setup-systemd lb ## Run the project as a systemd service
 
-.PHONY: run-with-lb
-run-with-lb: $(INIT_SOURCES) $(SOURCES) lb ## Run the project with the load balancer. Assumes setup is complete.
-	guile \
-		-L $(SOURCE_DIR) \
-		-s \
-			$(ENTRYPOINT)
-
-.PHONY: run-with-repl-server
-run-with-repl-server: REPL_PORT ?= 1689
-run-with-repl-server: $(INIT_SOURCES) $(SOURCES) ## Run the project with a REPL server exposed
+.PHONY: run-with-repl
+run-with-repl: REPL_PORT ?= 1689
+run-with-repl: $(INIT_SOURCES) $(SOURCES) ## Run the project with a REPL server exposed
+	export SQLITE_LIBRARY_PATH=$(SQLITE_LIBRARY_PATH); \
 	guile \
 		-L $(SOURCE_DIR) \
 		--listen=$(REPL_PORT) \
@@ -39,10 +39,18 @@ run-with-repl-server: $(INIT_SOURCES) $(SOURCES) ## Run the project with a REPL 
 .PHONY: setup-lb
 setup-lb: ## Sets up the LB and syncs static content. Needs root access.
 	NGINX_CONF=$(shell nginx -V 2>&1 | grep -o '\-\-conf-path=\(.*conf\)' | cut -d '=' -f2); \
-	ln -s -f $(shell pwd)/src/nginx/nginx.conf $${NGINX_CONF}; \
+	ln -s -f $(CWD)/src/etc/nginx/nginx.conf $${NGINX_CONF}; \
 	mkdir -p /var/www; \
-	ln -s -f $(shell pwd)/src/www/reformer.fyi/ /var/www/reformer.fyi; \
+	ln -s -f -n $(CWD)/src/www/reformer.fyi/ /var/www/reformer.fyi; \
 	nginx -t
+
+.PHONY: setup-systemd
+setup-systemd: ## Sets up the systemd service for auto-restart
+	SERVICE=/etc/systemd/system/reformer.service; \
+	ln -s -f $(CWD)/src$${SERVICE} $${SERVICE}; \
+	systemctl daemon-reload; \
+	systemctl enable reformer.service; \
+	systemctl start reformer.service
 
 .PHONY: lb
 lb: ## Runs the load balancer, enabling static content serving
@@ -70,31 +78,49 @@ else
 endif
 
 .PHONY: setup-arch
-setup-arch: guile-pacman ## Sets up an Arch machine
+setup-arch: setup-pacman setup-lb ## Sets up an Arch machine
 .PHONY: setup-debian
-setup-debian: guile-apt ## Sets up a Debian-based machine
+setup-debian: setup-apt setup-lb ## Sets up a Debian-based machine
 .PHONY: setup-fedora
-setup-fedora: guile-dnf ## Sets up a Fedora machine
+setup-fedora: setup-dnf setup-lb ## Sets up a Fedora machine
 .PHONY: setup-osx
-setup-osx: guile-brew ## Sets up a Mac machine
+setup-osx: setup-brew setup-lb ## Sets up a Mac machine
 
-##@ Guile install
+##@ Package manager installs
 
-.PHONY: guile-apt
-guile-apt: ## Install guile via APT
-	apt-get update -y
+.PHONY: setup-apt
+setup-apt: ## Install packages via APT
+	apt-get update -y; \
 	if ! apt-get install -y guile-3.0; then \
 		apt-get install -y guile; \
-	fi
-.PHONY: guile-brew
-guile-brew: ## Install guile via Homebrew (https://brew.sh)
-	brew install guile
-.PHONY: guile-dnf
-guile-dnf: ## Install guile via DNF
-	dnf install -y guile
-.PHONY: guile-pacman
-guile-pacman: ## Install guile via Pacman
-	pacman -S guile
+	fi; \
+	apt-get install -y \
+		nginx \
+		libsqlite3-dev \
+		sqlite3
+.PHONY: setup-brew
+setup-brew: ## Install packages via Homebrew (https://brew.sh)
+	brew install \
+		guile \
+		nginx \
+		sqlite; \
+	brew link \
+		--force \
+		sqlite
+.PHONY: setup-dnf
+setup-dnf: ## Install packages via DNF
+	dnf install -y \
+		guile \
+		nginx \
+		sqlite \
+		sqlite-devel
+.PHONY: setup-pacman
+setup-pacman: ## Install packages via Pacman
+	pacman -S \
+		guile \
+	  	nginx \
+		sqlite \
+		sqlite-devel
 
 ##@ REPL
 
@@ -137,9 +163,10 @@ endif
 container-run:
 container-run: ## Runs the container
 	docker run -it \
-		-p 88:88 \
+		-p 80:80 \
 		-p 8080:8080 \
-		--mount type=bind,source="$(shell pwd)/src",target=/app/src \
+		-p 1689:1689 \
+		--mount type=bind,source="$(CWD)/src",target=/app/src \
 		$(CONTAINER_NAME):$(CONTAINER_TAG)
 
 .PHONY: container-push

@@ -1,0 +1,12 @@
+[Unit]
+Description=Reformer web server
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/root/reformer
+ExecStart=/usr/bin/make run
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
