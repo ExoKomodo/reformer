@@ -6,14 +6,16 @@
              (web uri))
 
 (define (log-header header)
-    (format #t "~/~s: ~a~%" (car header) (cdr header)))
+    (format #t "~s=~a," (car header) (cdr header)))
 
 (define (log-request request)
-  (format #t "Method: ~s~%" (request-method request))
-  (format #t "Path:   ~s~%" (uri->string (request-uri request)))
-  (format #t "Headers:~%")
+  (format #t
+          "~s:~s:"
+          (request-method request)
+          (uri->string (request-uri request)))
   (let ((headers (request-headers request)))
-    (for-each log-header headers)))
+    (for-each log-header headers))
+  (format #t "~%"))
 
 (define (not-found request)
   (values (build-response #:code 404)
