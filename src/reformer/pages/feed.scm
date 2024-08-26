@@ -15,23 +15,20 @@
 
 (define (load-posts posts)
   (map (lambda (post)
-         (let ((poster (make-instance <poster>
+         (let ((user (make-instance <user>
                                       #:handle (get-field 'handle
-                                                          (get-field 'poster post)))))
+                                                          (get-field 'user post)))))
            (make-instance <post>
-                          #:name (get-field 'name post)
                           #:content (get-field 'content post)
-                          #:poster poster)))
+                          #:user user)))
        posts))
 
-(define dummy-posts '(((name . "A post")
-                       (content . "Lorem ipsum odor amet, consectetuer adipiscing elit. Dictum id penatibus facilisi commodo accumsan odio. Venenatis dis sollicitudin elementum torquent facilisis aenean hac feugiat metus.")
-                       (poster . ((handle . "OtherGuy"))))
-                      ((name . "Another post")
-                       (content . "Lorem ipsum odor amet, consectetuer adipiscing elit.")
-                       (poster . ((handle . "SomeGuy"))))))
+(define dummy-posts '(((content . "Lorem ipsum odor amet, consectetuer adipiscing elit. Dictum id penatibus facilisi commodo accumsan odio. Venenatis dis sollicitudin elementum torquent facilisis aenean hac feugiat metus.")
+                       (user . ((handle . "OtherGuy"))))
+                      ((content . "Lorem ipsum odor amet, consectetuer adipiscing elit.")
+                       (user . ((handle . "SomeGuy"))))))
 
-(define (index)
+(define (index db)
   (let ((loaded-posts (load-posts dummy-posts)))
     (html-page
      `(,((lambda () (navbar)))
@@ -40,8 +37,7 @@
        ,(map
          (lambda (post)
            `(div
-             (h3 ,(name post))
              (p ,(content post))
-             (h4 ,(format #f "@~a" (handle (poster post))))
+             (h5 ,(format #f "@~a" (handle (user post))))
              ))
          loaded-posts)))))

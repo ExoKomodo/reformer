@@ -12,7 +12,7 @@
              ((reformer pages feed) #:prefix feed:)
              ((reformer pages home) #:prefix home:))
 
-(define (router request request-body)
+(define (router request request-body db)
   (log-request request)
   (let ((path (uri->string (request-uri request))))
     (cond
@@ -21,7 +21,7 @@
         (home:index visits))
       ((string=? "/feed" path)
         (set! visits (+ visits 1))
-        (feed:index))
+        (feed:index db))
       ((string=? "/about" path)
         (set! visits (+ visits 1))
         (about:index))
