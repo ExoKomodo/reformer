@@ -4,6 +4,7 @@
 (use-modules (reformer config)
              (reformer db)
              (reformer routing)
+             (reformer models)
              (web server)
              (rnrs))
 
@@ -25,6 +26,7 @@
 
 (define (restoration db)
   "Perpetual loop of Reformer"
+  (post/read-all db)
   (format #t "We are to be restored~%")
   (format #t "Reformer will be running at ~a://~a:~d~%" scheme host port)
   (run-server

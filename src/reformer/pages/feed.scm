@@ -37,7 +37,7 @@
        ,(map
          (lambda (post)
            `(div
-             (p ,(content post))
-             (h5 ,(format #f "@~a" (handle (user post))))
+             (p ,(post/content post))
+             (h5 ,(format #f "@~a" (user/handle (post/user post))))
              ))
          loaded-posts)))))
