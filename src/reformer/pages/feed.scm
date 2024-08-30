@@ -10,26 +10,8 @@
              (reformer models)
              (reformer html))
 
-(define (get-field field alist)
-  (cdr (assoc field alist)))
-
-(define (load-posts posts)
-  (map (lambda (post)
-         (let ((user (make-instance <user>
-                                      #:handle (get-field 'handle
-                                                          (get-field 'user post)))))
-           (make-instance <post>
-                          #:content (get-field 'content post)
-                          #:user user)))
-       posts))
-
-(define dummy-posts '(((content . "Lorem ipsum odor amet, consectetuer adipiscing elit. Dictum id penatibus facilisi commodo accumsan odio. Venenatis dis sollicitudin elementum torquent facilisis aenean hac feugiat metus.")
-                       (user . ((handle . "OtherGuy"))))
-                      ((content . "Lorem ipsum odor amet, consectetuer adipiscing elit.")
-                       (user . ((handle . "SomeGuy"))))))
-
 (define (index db)
-  (let ((loaded-posts (load-posts dummy-posts)))
+  (let ((loaded-posts (post/read-all db)))
     (html-page
      `(,((lambda () (navbar)))
        (h1 (a (@ (href "/feed"))
@@ -37,7 +19,8 @@
        ,(map
          (lambda (post)
            `(div
-             (p ,(content post))
-             (h5 ,(format #f "@~a" (handle (user post))))
+             (p ,(post/content post))
+             (h5 ,(format #f "@~a" (user/handle (user/read-by-id db
+                                                                 (post/user-id post)))))
              ))
          loaded-posts)))))

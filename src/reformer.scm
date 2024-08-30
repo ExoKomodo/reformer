@@ -4,8 +4,11 @@
 (use-modules (reformer config)
              (reformer db)
              (reformer routing)
-             (web server)
-             (rnrs))
+             (reformer models)
+             (external sqlite3)
+             (oop goops)
+             (ice-9 textual-ports)
+             (web server))
 
 (define (creation)
   "Sets up the storage engine for Reformer"
@@ -13,7 +16,19 @@
   (format #t "Testing the database...~%")
   (db/test)
   (format #t "Database testing is complete~%")
-  (db/open (db/boot db/sqlite-db-path)))
+  (with-db (db db/sqlite-db-path)
+           (let ((ddl (call-with-input-file db/ddl-file-path get-string-all)))
+             (sqlite-exec db ddl)
+             (let ((user1 (user/save (make-instance <user> #:id #f #:handle "jamesaorson") db))
+                   (user2 (user/save (make-instance <user> #:id #f #:handle "nbarlow") db)))
+               ;; TODO: Get id from save
+               (let ((post1 (post/save (make-instance <post> #:id #f #:content "bro" #:user-id 2) db))
+                     (post2 (post/save (make-instance <post> #:id #f #:content "hello brosefus" #:user-id 1) db)))
+               (format #t "User 1: ~a~%" user1)
+               (format #t "User 2: ~a~%" user2)
+               (format #t "Post 1: ~a~%" post1)
+               (format #t "Post 2: ~a~%" post2)))))
+  (db/open db/sqlite-db-path))
 
 (define (fall db)
   "Sets up login and identity management systems"

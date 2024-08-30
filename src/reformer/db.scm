@@ -1,14 +1,13 @@
 (define-module (reformer db)
-  #:export (db/boot
-            db/close
+  #:export (db/close
             db/open
             db/test
             with-db))
 
 (use-modules (external sqlite3)
              (reformer config)
+             (reformer models)
              (ice-9 format)
-             (ice-9 textual-ports)
              ((rnrs) #:prefix rnrs:))
 
 (define (db/open name)
@@ -29,21 +28,18 @@
       (db/close db-binding)
       result)))
 
-(define (db/boot name)
-  (with-db (db name)
-           (let ((ddl (call-with-input-file db/ddl-file-path get-string-all)))
-             (sqlite-exec db ddl))
-           name))
-
 (define (db/test)
   (with-db (db db/sqlite-test-db-path)
     (sqlite-exec db
                  "CREATE TABLE IF NOT EXISTS foo (id INTEGER PRIMARY KEY, bar STRING)")
+    (sqlite-exec db
+                 "DELETE FROM foo")
     (sqlite-exec db
                  "INSERT INTO foo ('bar') VALUES ('something')")
     (sqlite-exec* db
                   "SELECT * FROM foo WHERE :column > :threshold"
                   #:parameters '((column . id)
                                  (threshold . 0))
-                  #:indexed #t)))
+                  #:indexed #t
+                  #:row-handler identity)))
 

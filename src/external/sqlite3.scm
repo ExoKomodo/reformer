@@ -682,15 +682,16 @@ Also bind named parameters to the respective ones."
                                value)))
               parameters)
     
-    (let ((sqlite-map-fn (when (not row-handler)
-                           (if indexed
-                               (begin
-                                 (set! row-handler -row-print-indexed)
-                                 sqlite-map-with-index)
-                               (begin
-                                 (set! row-handler -row-print)
-                                 sqlite-map)))))
-      (sqlite-map-fn row-handler stmt))
-    (sqlite-finalize stmt)
-    #t))
+    (let ((sqlite-map-fn (if row-handler
+                             sqlite-map
+                             (if indexed
+                                 (begin
+                                   (set! row-handler -row-print-indexed)
+                                   sqlite-map-with-index)
+                                 (begin
+                                   (set! row-handler -row-print)
+                                   sqlite-map)))))
+      (let ((results (sqlite-map-fn row-handler stmt)))
+        (sqlite-finalize stmt)
+        results))))
 
