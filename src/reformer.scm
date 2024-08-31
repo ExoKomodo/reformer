@@ -19,15 +19,18 @@
   (with-db (db db/sqlite-db-path)
            (let ((ddl (call-with-input-file db/ddl-file-path get-string-all)))
              (sqlite-exec db ddl)
-             (let ((user1 (user/save (make-instance <user> #:id #f #:handle "jamesaorson") db))
-                   (user2 (user/save (make-instance <user> #:id #f #:handle "nbarlow") db)))
-               ;; TODO: Get id from save
-               (let ((post1 (post/save (make-instance <post> #:id #f #:content "bro" #:user-id 2) db))
-                     (post2 (post/save (make-instance <post> #:id #f #:content "hello brosefus" #:user-id 1) db)))
-               (format #t "User 1: ~a~%" user1)
-               (format #t "User 2: ~a~%" user2)
-               (format #t "Post 1: ~a~%" post1)
-               (format #t "Post 2: ~a~%" post2)))))
+             ;; TODO: Install [guile-gcrypt](https://notabug.org/cwebber/guile-gcrypt) and hash the password
+             (user/save (make-instance <user>
+                                       #:id #f
+                                       #:handle "jamesaorson"
+                                       #:password-hash "myman") db)
+             (user/save (make-instance <user>
+                                       #:id #f
+                                       #:handle "nbarlow"
+                                       #:password-hash "myguy") db)
+             ;; TODO: Get id from save
+             (post/save (make-instance <post> #:id #f #:content "Hey dude, what's the Lord working in you today?" #:user-id 1) db)
+             (post/save (make-instance <post> #:id #f #:content "Something big and similar to bean burrito" #:user-id 2) db)))
   (db/open db/sqlite-db-path))
 
 (define (fall db)

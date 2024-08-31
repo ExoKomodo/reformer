@@ -1,5 +1,5 @@
 (define-module (reformer pages feed)
-  #:export (index))
+  #:export (feed/index feed/post-list))
 
 (use-modules (oop goops)
              (sxml simple)
@@ -10,17 +10,33 @@
              (reformer models)
              (reformer html))
 
-(define (index db)
+(define (feed/post-list posts db)
+  `(div (@ (id "posts"))
+        ,(map
+          (lambda (post)
+            `(div
+              (p (@ (style "word-break: break-all"))
+                 ,(post/content post))
+              (h5 ,(format #f "~~~a" (user/handle (user/read-by-id db
+                                                                  (post/user-id post)))))
+              ))
+          posts)))
+
+(define (feed/index db)
   (let ((loaded-posts (post/read-all db)))
     (html-page
      `(,((lambda () (navbar)))
-       (h1 (a (@ (href "/feed"))
-              "Reformer Feed"))
-       ,(map
-         (lambda (post)
-           `(div
-             (p ,(post/content post))
-             (h5 ,(format #f "@~a" (user/handle (user/read-by-id db
-                                                                 (post/user-id post)))))
-             ))
-         loaded-posts)))))
+       (div (@ (style "float: left; max-width: 60vw"))
+            (h1 (a (@ (href "/feed"))
+                   "Reformer Feed"))
+            ,(feed/post-list loaded-posts db))
+       (div (@ (style "float: right"))
+            (form (div (h3 "Make a post!"))
+                  (div (label (@ (for "password")) "First, enter your password...")
+                       (div (input (@ (type "password") (name "password")))))
+                  (div (label (@ (for "content")) "Now, what do you want to say to the body?")
+                       (div (textarea (@ (name "content")) "")))
+                  (button (@ (hx-post "/post")
+                             (hx-swap "outerHTML")
+                             (hx-target "#posts"))
+                          "Click me")))))))

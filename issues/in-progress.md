@@ -40,5 +40,4 @@ Be able to create posts in a simple form
 
 ### Acceptance Criteria
 
-- User should be able to create a new post, with a user
-- Support both HTMX and no JS
+User should be able to create a new post, with a user
