@@ -22,3 +22,22 @@ Be able to lint from the
 - container used in `container-{build,run}`
 - [pipelines on Sourcehut](https://builds.sr.ht/~jamesaorson/reformer)
 
+## Allow for adding posts
+
+### Branch (not created) - [post-form](https://git.sr.ht/~jamesaorson/reformer/tree/post-form)
+
+### Overview
+
+Be able to create posts in a simple form
+
+### Instructions
+
+- Add a new POST endpoint for post objects
+- Add HTMX to the frontend
+  - Submit the form with HTMX
+  - Without JS, submit the form with a normal post
+
+### Acceptance Criteria
+
+- User should be able to create a new post, with a user
+- Support both HTMX and no JS
