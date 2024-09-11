@@ -189,7 +189,7 @@ Add a SQLite database to Reformer, for storing persistent data and allowing for 
 
 ## Load and store models in Sqlite
 
-### Branch - [rw-sqlite-models](https://git.sr.ht/~jamesaorson/reformer/tree/rw-sqlite-models)
+### Branch - [rw-sqlite-models](https://github.com/exokomodo/reformer/tree/rw-sqlite-models)
 
 ### Overview
 
@@ -207,3 +207,20 @@ Have info about:
 - load models from sqlite
 - display posts from actual user data
 - use the store functions for filling the test entries for dev
+
+## Allow for adding posts
+
+### Branch - [post-form](https://github.com/exokomodo/reformer/tree/post-form)
+
+### Overview
+
+Be able to create posts in a simple form
+
+### Instructions
+
+- Add a new POST endpoint for post objects
+- Submit the form with HTMX
+
+### Acceptance Criteria
+
+User should be able to create a new post, with a user
