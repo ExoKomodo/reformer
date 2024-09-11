@@ -43,3 +43,22 @@ submodule and provide a `make` target for dealing with library compilations.
 
 - replace `guile-sqlite` with `guile-dbi`
 - if necessary to build `guile-dbi`, add a `make build-libs` target
+
+## Login using username
+
+### Branch (not created) - [login-with-username](https://git.sr.ht/~jamesaorson/reformer/tree/login-with-username)
+
+### Overview
+
+Currently, users are distinguished by password. I won't even explain why this is bad. Allow for username to be added.
+
+### Instructions
+
+- Add a username field to the form for submitting a post
+- Match username when submitting a post
+- Return a `401` when failing to submit
+- (optional) Save the login in a client-side storage
+
+### Acceptance Criteria
+
+Be able to specify user when submitting a post
