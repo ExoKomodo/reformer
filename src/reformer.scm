@@ -1,13 +1,14 @@
 (define-module (reformer)
   #:export (cfrr))
 
-(use-modules (reformer config)
+(use-modules (f)
+			 (pipe)
+			 (reformer config)
              (reformer db)
              (reformer routing)
              (reformer models)
              (external sqlite3)
              (oop goops)
-             (ice-9 textual-ports)
              (web server))
 
 (define (creation)
@@ -17,7 +18,7 @@
   (db/test)
   (format #t "Database testing is complete~%")
   (with-db (db db/sqlite-db-path)
-           (let ((ddl (call-with-input-file db/ddl-file-path get-string-all)))
+           (let ((ddl (read-text db/ddl-file-path)))
              (sqlite-exec db ddl)
              ;; TODO: Install [guile-gcrypt](https://notabug.org/cwebber/guile-gcrypt) and hash the password
              (user/save (make-instance <user>
@@ -53,7 +54,7 @@
             #:port ,port)))
 
 (define (cfrr)
-  (let ((db (creation)))
-    (fall db)
-    (redemption db)
-    (restoration db)))
+  (-> (creation)
+    (fall)
+    (redemption)
+    (restoration)))

@@ -4,7 +4,9 @@ UNAME_M := $(shell uname -m)
 ENTRYPOINT := src/init.scm
 
 CWD := $(shell pwd)
+LIB_DIR := $(CWD)/lib
 SOURCE_DIR := $(CWD)/src
+GUILE_ARGS := -L $(LIB_DIR) -L $(SOURCE_DIR)
 
 INIT_SOURCES := $(wildcard src/*.scm)
 
@@ -19,7 +21,7 @@ SQLITE_LIBRARY_PATH ?= libsqlite3
 run: $(INIT_SOURCES) $(SOURCES) ## Run the project. Assumes setup is complete.
 	export SQLITE_LIBRARY_PATH=$(SQLITE_LIBRARY_PATH); \
 	guile \
-		-L $(SOURCE_DIR) \
+		$(GUILE_ARGS) \
 		-s \
 			$(ENTRYPOINT)
 
@@ -31,7 +33,7 @@ run-with-repl: REPL_PORT ?= 1689
 run-with-repl: $(INIT_SOURCES) $(SOURCES) ## Run the project with a REPL server exposed
 	export SQLITE_LIBRARY_PATH=$(SQLITE_LIBRARY_PATH); \
 	guile \
-		-L $(SOURCE_DIR) \
+		$(GUILE_ARGS) \
 		--listen=$(REPL_PORT) \
 		-s \
 			$(ENTRYPOINT)
