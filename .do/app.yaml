@@ -11,8 +11,7 @@ ingress:
 name: reformer
 region: sfo
 services:
-- dockerfile_path: Dockerfile
-  github:
+- github:
     branch: arm
     deploy_on_push: true
     repo: ExoKomodo/reformer
@@ -23,3 +22,5 @@ services:
   source_dir: /
   build_command: |
     make container-build
+  run_command: |
+    make container-run
