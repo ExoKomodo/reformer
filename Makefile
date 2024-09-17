@@ -39,7 +39,14 @@ run-with-repl: $(INIT_SOURCES) $(SOURCES) ## Run the project with a REPL server 
 
 .PHONY: test
 test: $(INIT_SOURCES) $(SOURCES)
-	echo "Test...TODO"
+	echo "Test...TODO"; \
+	pid_file=$(shell mktemp); \
+	($(MAKE) run &); \
+	sleep 2; \
+	curl \
+		--fail \
+		-X GET \
+		http://0.0.0.0:8080/;
 
 .PHONY: setup-lb
 setup-lb: ## Sets up the LB and syncs static content. Needs root access.
