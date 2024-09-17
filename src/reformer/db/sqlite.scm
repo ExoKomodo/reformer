@@ -1,10 +1,10 @@
-(define-module (reformer db)
+(define-module (reformer db sqlite)
   #:export (db/close
             db/open
             db/test
-            with-db))
+            db/with))
 
-(use-modules (external sqlite3)
+(use-modules (sqlite3)
              (reformer config)
              (reformer models)
              (ice-9 format)
@@ -22,14 +22,14 @@
   (sqlite-close db)
   (format #t "Closed the database!~%"))
 
-(define-syntax-rule (with-db (db-binding db-path) body ...)
+(define-syntax-rule (db/with (db-binding db-path) body ...)
   (let ((db-binding (db/open db-path)))
     (let ((result (begin body ...)))
       (db/close db-binding)
       result)))
 
 (define (db/test)
-  (with-db (db db/sqlite-test-db-path)
+  (db/with (db db/sqlite-test-db-path)
     (sqlite-exec db
                  "CREATE TABLE IF NOT EXISTS foo (id INTEGER PRIMARY KEY, bar STRING)")
     (sqlite-exec db

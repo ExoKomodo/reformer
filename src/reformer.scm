@@ -4,10 +4,11 @@
 (use-modules (f)
 			 (pipe)
 			 (reformer config)
-             (reformer db)
+             ;; ((reformer db psql) #:prefix pq:)
+             (reformer db sqlite)
              (reformer routing)
              (reformer models)
-             (external sqlite3)
+             (sqlite3)
              (oop goops)
              (web server))
 
@@ -17,7 +18,7 @@
   (format #t "Testing the database...~%")
   (db/test)
   (format #t "Database testing is complete~%")
-  (with-db (db db/sqlite-db-path)
+  (db/with (db db/sqlite-db-path)
            (let ((ddl (read-text db/ddl-file-path)))
              (sqlite-exec db ddl)
              ;; TODO: Install [guile-gcrypt](https://notabug.org/cwebber/guile-gcrypt) and hash the password
@@ -36,25 +37,29 @@
 
 (define (fall db)
   "Sets up login and identity management systems"
-  (format #t "Accounting for the sins of the fall~%"))
+  (format #t "Accounting for the sins of the fall: ~a~%" db)
+  db)
 
 (define (redemption db)
   "*Sets up observability and backup systems*"
-  (format #t "Providing security for the elect~%"))
+  (format #t "Providing security for the elect~a~%" db)
+  db)
 
 (define (restoration db)
   "Perpetual loop of Reformer"
-  (format #t "We are to be restored~%")
+  (format #t "We are to be restored: ~a~%" db)
   (format #t "Reformer will be running at ~a://~a:~d~%" scheme host port)
   (run-server
    (lambda (request request-body)
      (router request request-body db))
    'http
    `(#:host ,host
-            #:port ,port)))
+            #:port ,port))
+  db)
 
 (define (cfrr)
   (-> (creation)
-    (fall)
-    (redemption)
-    (restoration)))
+	  (fall)
+	  (redemption)
+	  (restoration)))
+

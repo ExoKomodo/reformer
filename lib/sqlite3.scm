@@ -25,7 +25,7 @@
 ;;
 ;;; Code:
 
-(define-module (external sqlite3)
+(define-module (sqlite3)
   #:use-module (system foreign)
   #:use-module (rnrs bytevectors)
   #:use-module (ice-9 match)
@@ -250,7 +250,7 @@
 (define sqlite-exec
   (let ((exec (pointer->procedure
                int
-               (dynamic-func "sqlite3_exec" (@@ (external sqlite3) libsqlite3))
+               (dynamic-func "sqlite3_exec" (@@ (sqlite3) libsqlite3))
                '(* * * * *))))
     (lambda* (db sql)
       "Evaluate the string SQL, which may contain one or several SQL

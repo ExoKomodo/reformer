@@ -12,7 +12,8 @@
 
 ## Pipeline Status
 
-- Build [![Build status](https://builds.sr.ht/~jamesaorson/reformer/commits/main/build.yml.svg)](https://builds.sr.ht/~jamesaorson/reformer/commits/main/build.yml)
+- Build (`amd64`) [![Build status](https://builds.sr.ht/~jamesaorson/reformer/commits/main/build-amd64.yml.svg)](https://builds.sr.ht/~jamesaorson/reformer/commits/main/build-amd64.yml)
+- Build (`arm64`) [![Build status](https://builds.sr.ht/~jamesaorson/reformer/commits/main/build-arm64.yml.svg)](https://builds.sr.ht/~jamesaorson/reformer/commits/main/build-arm64.yml)
 
 - Mirror [![Git mirror status](https://builds.sr.ht/~jamesaorson/reformer/commits/main/mirror.yml.svg)](https://builds.sr.ht/~jamesaorson/reformer/commits/main/mirror.yml)
 

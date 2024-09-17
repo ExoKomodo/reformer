@@ -12,12 +12,12 @@ name: reformer
 region: sfo
 services:
 - github:
-    branch: main
+    branch: guile-dbi
     deploy_on_push: true
     repo: ExoKomodo/reformer
-  http_port: 80
   instance_count: 1
   instance_size_slug: basic-xxs
   name: reformer
   source_dir: /
-  dockerfile_path: ./Dockerfile
+  http_port: 80
+  dockerfile_path: Dockerfile

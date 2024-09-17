@@ -1,0 +1,55 @@
+image: debian/bookworm
+arch: amd64
+packages:
+- ca-certificates
+- curl
+- sudo
+secrets:
+# dockerhub access token
+- 024dec02-ae4c-468e-a764-1b0806498524
+environment:
+  CRI: sudo docker
+  IMAGE_NAME: docker.io/exokomodo/reformer
+  IMAGE_TAG: latest
+  USERNAME: exokomodo
+tasks:
+- docker-setup: |-
+    sudo install -m 0755 -d /etc/apt/keyrings
+    sudo curl -fsSL https://download.docker.com/linux/debian/gpg -o /etc/apt/keyrings/docker.asc
+    sudo chmod a+r /etc/apt/keyrings/docker.asc
+
+    # Add the repository to Apt sources:
+    echo \
+      "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/debian \
+      $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+      sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+    sudo apt-get update
+
+    sudo apt-get install -y \
+      docker-ce \
+      docker-ce-cli \
+      containerd.io \
+      docker-buildx-plugin
+      # docker-compose-plugin
+- system-check: |-
+    ${CRI} --version
+- login: |
+    cat ~/dockerhub-access-token | ${CRI} login docker.io \
+      --username ${USERNAME} \
+      --password-stdin
+- build: |-
+    cd reformer
+    TIMESTAMP=$(date +%Y%m%d%H%M%S)
+    BRANCH=${GIT_REF#refs/heads/}
+    TIME_TAG=${BRANCH}-${TIMESTAMP}
+    CONTAINER_TAG=${TIME_TAG}
+    ADDITIONAL_CONTAINER_BUILD_ARGS=""
+    if [ "${GIT_REF}" = "refs/heads/main" ]; then
+      ADDITIONAL_CONTAINER_BUILD_ARGS="--tag ${USERNAME}/reformer:latest"
+    fi
+    sudo make container-build-amd64 \
+      CONTAINER_TAG=${CONTAINER_TAG} \
+      ADDITIONAL_CONTAINER_BUILD_ARGS="${ADDITIONAL_CONTAINER_BUILD_ARGS}"
+- push: |-
+    cd reformer
+    sudo make container-push-all

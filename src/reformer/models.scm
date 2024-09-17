@@ -10,10 +10,20 @@
             user/get-user-by-password
             user/read-by-id
             user/read-all
-            user/save))
+            user/save
+            define-foreign-type))
 
 (use-modules (oop goops)
-             (external sqlite3))
+             (sqlite3)
+             (system foreign))
+
+(define-syntax-rule
+    (define-foreign-type (reader writer) (field type) ...)
+  (begin
+    (define (reader bv offset)
+      (read-c-struct bv offset ((field type) ...) values))
+    (define (writer bv offset field ...)
+      (write-c-struct bv offset ((field type) ...)))))
 
 (define-class <user> (<object>)
   (id #:init-keyword #:id
