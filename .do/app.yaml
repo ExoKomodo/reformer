@@ -21,4 +21,5 @@ services:
   instance_size_slug: basic-xxs
   name: reformer
   source_dir: /
-
+  build_command: |
+    make container-build
