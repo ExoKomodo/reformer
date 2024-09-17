@@ -1,5 +1,5 @@
-# ARG IMAGE_NAME=debian
-ARG IMAGE_NAME=arm64v8/debian
+ARG IMAGE_NAME=debian
+# ARG IMAGE_NAME=arm64v8/debian
 
 FROM ${IMAGE_NAME}:12-slim
 
