@@ -13,7 +13,7 @@ region: sfo
 services:
 - dockerfile_path: Dockerfile
   github:
-    branch: main
+    branch: arm
     deploy_on_push: true
     repo: ExoKomodo/reformer
   http_port: 80
