@@ -20,7 +20,4 @@ services:
   instance_size_slug: basic-xxs
   name: reformer
   source_dir: /
-  build_command: |
-    make container-build
-  run_command: |
-    make container-run
+  dockerfile_path: ./Dockerfile

@@ -152,6 +152,7 @@ container-build: container-build-$(UNAME_M) ## Builds the container (detects CPU
 
 .PHONY: container-build-amd64
 container-build-amd64: ## Builds the container (amd64)
+	ADDITIONAL_CONTAINER_BUILD_ARGS="$(ADDITIONAL_CONTAINER_BUILD_ARGS) --build-arg IMAGE_NAME=debian";
 ifeq ($(UNAME_M), arm64)
 	docker buildx build --platform linux/amd64 . \
 	--tag $(CONTAINER_NAME):$(CONTAINER_TAG) \
