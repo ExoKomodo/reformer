@@ -148,8 +148,11 @@ ADDITIONAL_CONTAINER_BUILD_ARGS ?=
 ADDITIONAL_CONTAINER_PUSH_ARGS ?= 
 
 .PHONY: container-build
-container-build:
-container-build: ## Builds the container
+container-build: container-build-$(UNAME_M) ## Builds the container (detects CPU architecture)
+
+.PHONY: container-build-amd64
+container-build-amd64: ## Builds the container (amd64)
+	ADDITIONAL_CONTAINER_BUILD_ARGS="$(ADDITIONAL_CONTAINER_BUILD_ARGS) --build-arg IMAGE_NAME=debian";
 ifeq ($(UNAME_M), arm64)
 	docker buildx build --platform linux/amd64 . \
 	--tag $(CONTAINER_NAME):$(CONTAINER_TAG) \
@@ -160,6 +163,27 @@ else
 	--tag $(CONTAINER_NAME):$(CONTAINER_TAG) \
 	$(ADDITIONAL_CONTAINER_BUILD_ARGS)
 endif
+.PHONY: container-build-x86_64
+container-build-x86_64: container-build-amd64 ## Builds the container (amd64)
+
+.PHONY: container-build-arm64
+container-build-arm64: ## Builds the container (arm)
+	ADDITIONAL_CONTAINER_BUILD_ARGS="$(ADDITIONAL_CONTAINER_BUILD_ARGS) --build-arg IMAGE_NAME=arm64v8/debian";
+ifeq ($(UNAME_M), arm64)
+	docker build . \
+	--tag $(CONTAINER_NAME):$(CONTAINER_TAG) \
+	$${ADDITIONAL_CONTAINER_BUILD_ARGS}
+else
+	docker buildx build --platform linux/arm64 . \
+		--tag $(CONTAINER_NAME):$(CONTAINER_TAG) \
+		--load \
+		$${ADDITIONAL_CONTAINER_BUILD_ARGS}
+endif
+
+.PHONY: container-build-aarch64 ## Builds the container (arm)
+container-build-aarch64: container-build-arm64
+.PHONY: container-build-arm ## Builds the container (arm)
+container-build-arm: container-build-arm64
 
 .PHONY: container-run
 container-run:

@@ -11,8 +11,7 @@ ingress:
 name: reformer
 region: sfo
 services:
-- dockerfile_path: Dockerfile
-  github:
+- github:
     branch: main
     deploy_on_push: true
     repo: ExoKomodo/reformer
@@ -21,4 +20,4 @@ services:
   instance_size_slug: basic-xxs
   name: reformer
   source_dir: /
-
+  dockerfile_path: ./Dockerfile

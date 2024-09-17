@@ -1,15 +1,15 @@
-FROM debian:12-slim
+ARG IMAGE_NAME=debian
+# ARG IMAGE_NAME=arm64v8/debian
+
+FROM ${IMAGE_NAME}:12-slim
 
 RUN apt-get update -y \
     && apt-get install -y \
     curl \
-    guile-3.0 \
-    libsqlite3-dev \
+    git \
     lsof \
     make \
-    nginx \
     procps \
-		sqlite3 \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/*
 
@@ -18,8 +18,9 @@ COPY ./src /app/src
 WORKDIR /app
 RUN make setup \
     && apt-get clean \
-    && rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/*
-RUN make setup-lb
+    && rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/* \
+    && make setup-lb
+COPY ./lib /app/lib
 
  # Nginx lb port
 EXPOSE 80
