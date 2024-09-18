@@ -4,7 +4,7 @@ UNAME_M := $(shell uname -m)
 ENTRYPOINT := src/init.scm
 
 CWD := $(shell pwd)
-LIB_DIR := $(CWD)/lib
+LIB_DIR := $(CWD)/lib/src
 SOURCE_DIR := $(CWD)/src
 GUILE_ARGS := -L $(LIB_DIR) -L $(SOURCE_DIR)
 
