@@ -31,7 +31,7 @@
                                        #:handle "nbarlow"
                                        #:password-hash "myguy") db)
              ;; TODO: Get id from save
-             (post/save (make-instance <post> #:id #f #:content "Hey <strong>dude</strong>, what's the Lord working in you today?" #:user-id 1) db)
+             (post/save (make-instance <post> #:id #f #:content "Hey <marquee><strong>dude</strong></marquee>, what's the Lord working in you today?" #:user-id 1) db)
              (post/save (make-instance <post> #:id #f #:content "Something big and similar to a bean burrito" #:user-id 2) db)
 			 (post/save (make-instance <post> #:id #f #:content "<a href=\"https://letmegooglethat.com/\">Use this coding tutor</a>" #:user-id 1) db)))
   (db/open db/sqlite-db-path))
