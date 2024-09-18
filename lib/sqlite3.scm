@@ -126,7 +126,8 @@
   (logior SQLITE_CONSTRAINT (ash 8 8)))
 ;; NOTE: Added by James Orson, to avoid needing the official build of this library,
 ;; and to support dynamic library paths for sqlite
-(define libsqlite3 (dynamic-link (getenv "SQLITE_LIBRARY_PATH")))
+(define libsqlite3 (dynamic-link (or (getenv "SQLITE_LIBRARY_PATH")
+									 "libsqlite3")))
 
 (define-record-type <sqlite-db>
   (make-db pointer open? stmts)
