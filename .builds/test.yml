@@ -5,6 +5,9 @@ packages:
 - make
 - sudo
 tasks:
+- clone-submodules: |-
+    cd reformer
+    git submodule update --init --recursive
 - setup: |-
     cd reformer
     sudo make setup-apt
