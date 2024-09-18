@@ -21,7 +21,7 @@ RUN make setup \
     && rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/* \
     && make setup-lb
 COPY ./lib /app/lib
-RUN rm -rf /app/lib/sdl2* 
+RUN rm -rf /app/lib/sdl2 /app/lib/sdl2.scm 
 
  # Nginx lb port
 EXPOSE 80
