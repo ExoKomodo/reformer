@@ -1,3 +1,5 @@
+# syntax=docker.io/docker/dockerfile:1.7-labs
+
 ARG IMAGE_NAME=debian
 # ARG IMAGE_NAME=arm64v8/debian
 
@@ -20,7 +22,7 @@ RUN make setup \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/* \
     && make setup-lb
-COPY ./lib /app/lib
+COPY --exclude=lib/sdl2* ./lib /app/lib
 
  # Nginx lb port
 EXPOSE 80
