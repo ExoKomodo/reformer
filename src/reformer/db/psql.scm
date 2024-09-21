@@ -155,6 +155,12 @@
 ;; int 	errorReported
 ;; PQExpBufferData 	workBuffer
 
+(define (db/close db)
+  "TODO: Migrate to PSQL"
+  (format #t "Closing the database...~%")
+  (sqlite-close db)
+  (format #t "Closed the database!~%"))
+
 (define (db/open connection-string)
   "TODO: Migrate to PSQL"
   (format #t "Bringing up the ~s database...~%" connection-string)
@@ -162,11 +168,17 @@
     (format #t "Database is running: ~a -> ~%" db)
     db))
 
-(define (db/close db)
-  "TODO: Migrate to PSQL"
-  (format #t "Closing the database...~%")
-  (sqlite-close db)
-  (format #t "Closed the database!~%"))
+(define* (db/query db query
+				   #:optional
+				   (parameters '())
+				   (indexed #t)
+				   (row-handler identity))
+		 (if (or (null? parameters) (not parameters))
+		     (sqlite-exec db query)
+			 (sqlite-exec* db query
+						   #:parameters parameters
+						   #:indexed indexed
+						   #:row-handler row-handler)))
 
 (define-syntax-rule (db/with (db-binding db-path) body ...)
   "TODO: Migrate to PSQL"
@@ -178,18 +190,18 @@
 (define (db/test)
   "TODO: Migrate to PSQL")
   ; (db/with (db db/sqlite-test-db-path)
-  ;   (sqlite-exec db
-  ;                "CREATE TABLE IF NOT EXISTS foo (id INTEGER PRIMARY KEY, bar STRING)")
-  ;   (sqlite-exec db
-  ;                "DELETE FROM foo")
-  ;   (sqlite-exec db
-  ;                "INSERT INTO foo ('bar') VALUES ('something')")
-  ;   (sqlite-exec* db
-  ;                 "SELECT * FROM foo WHERE :column > :threshold"
-  ;                 #:parameters '((column . id)
-  ;                                (threshold . 0))
-  ;                 #:indexed #t
-  ;                 #:row-handler identity)))
+  ;   (db/query db
+  ;             "CREATE TABLE IF NOT EXISTS foo (id INTEGER PRIMARY KEY, bar STRING)")
+  ;   (db/query db
+  ;             "DELETE FROM foo")
+  ;   (db/query db
+  ;             "INSERT INTO foo ('bar') VALUES ('something')")
+  ;   (db/query db
+  ;             "SELECT * FROM foo WHERE :column > :threshold"
+  ;             #:parameters '((column . id)
+  ;                            (threshold . 0))
+  ;             #:indexed #t
+  ;             #:row-handler identity)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;
 ;; CONNECTION - PSQL ;;

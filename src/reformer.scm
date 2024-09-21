@@ -20,7 +20,7 @@
   (format #t "Database testing is complete~%")
   (db/with (db db/sqlite-db-path)
            (let ((ddl (read-text db/ddl-file-path)))
-             (sqlite-exec db ddl)
+             (db/query db ddl)
              ;; TODO: Install [guile-gcrypt](https://notabug.org/cwebber/guile-gcrypt) and hash the password
              (user/save (make-instance <user>
                                        #:id #f
