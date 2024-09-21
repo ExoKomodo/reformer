@@ -5,6 +5,7 @@
 			 (pipe)
 			 (reformer config)
              ;; ((reformer db psql) #:prefix pq:)
+			 (sqlite3)
              (reformer db sqlite)
              (reformer routing)
              (reformer models)
@@ -20,7 +21,7 @@
   (format #t "Database testing is complete~%")
   (db/with (db db/sqlite-db-path)
            (let ((ddl (read-text db/ddl-file-path)))
-             (db/query db ddl)
+             (sqlite-exec db ddl)
              ;; TODO: Install [guile-gcrypt](https://notabug.org/cwebber/guile-gcrypt) and hash the password
              (user/save (make-instance <user>
                                        #:id #f
@@ -33,7 +34,8 @@
              ;; TODO: Get id from save
              (post/save (make-instance <post> #:id #f #:content "Hey <marquee><strong>dude</strong></marquee>, what's the Lord working in you today?" #:user-id 1) db)
              (post/save (make-instance <post> #:id #f #:content "Something big and similar to a bean burrito" #:user-id 2) db)
-			 (post/save (make-instance <post> #:id #f #:content "<a href=\"https://letmegooglethat.com/\">Use this coding tutor</a>" #:user-id 1) db)))
+			 (post/save (make-instance <post> #:id #f #:content "<a href=\"https://letmegooglethat.com/\">Use this coding tutor</a>" #:user-id 1) db)
+			 (post/save (make-instance <post> #:id #f #:content "This might be rude, lewd, and obnoxious. <script>setTimeout(function() {window.alert('haha got you!')}, 5000)</script>" #:user-id 1) db)))
   (db/open db/sqlite-db-path))
 
 (define (fall db)
