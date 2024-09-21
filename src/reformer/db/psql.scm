@@ -169,7 +169,7 @@
     db))
 
 (define* (db/query db query
-				   #:optional
+				   #:key
 				   (parameters '())
 				   (indexed #t)
 				   (row-handler identity))

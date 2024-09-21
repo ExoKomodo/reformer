@@ -45,6 +45,7 @@
                                                        #:content content
                                                        #:user-id (user/id user))
                                         db)
+							 (format #t "Created post with text: ~s" content)
                              (http/build-html-response (feed/post-list (post/read-all db)
                                                                        db)))))))
              (else (not-found request))))

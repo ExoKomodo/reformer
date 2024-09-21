@@ -24,16 +24,14 @@
     db))
 
 (define* (db/query db query
-				   #:optional
+				   #:key
 				   (parameters '())
 				   (indexed #t)
 				   (row-handler identity))
-		 (if (or (null? parameters) (not parameters))
-		     (sqlite-exec db query)
-			 (sqlite-exec* db query
-						   #:parameters parameters
-						   #:indexed indexed
-						   #:row-handler row-handler)))
+		 (sqlite-exec* db query
+					   #:parameters parameters
+					   #:indexed indexed
+					   #:row-handler row-handler))
 
 (define-syntax-rule (db/with (db-binding db-path) body ...)
   (let ((db-binding (db/open db-path)))
@@ -41,7 +39,7 @@
       (db/close db-binding)
       result)))
 
-(define (db/test db query)
+(define (db/test)
   (db/with (db db/sqlite-test-db-path)
     (db/query db
 			  "CREATE TABLE IF NOT EXISTS foo (id INTEGER PRIMARY KEY, bar STRING)")
