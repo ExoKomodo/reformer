@@ -14,7 +14,7 @@
 								define-foreign-type))
 
 (use-modules (oop goops)
-			 (reformer db sqlite)
+			 (reformer db psql)
 			 (system foreign))
 
 (define-syntax-rule

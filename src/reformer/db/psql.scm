@@ -1,9 +1,12 @@
 (define-module (reformer db psql)
   #:export (db/close
             db/open
+			db/query
             db/test
             db/with
-            db/psql-connection-string))
+            db/connection-string
+			db/test-connection-string
+			db/ddl-file-path))
 
 (use-modules (reformer config)
              (reformer models)
@@ -12,15 +15,63 @@
              ((rnrs) #:prefix rnrs:)
              (rnrs bytevectors))
 
+(define db/connection-string (getenv "REFORMER_CONNECTION_STRING"))
+(define db/test-connection-string (getenv "REFORMER_TEST_CONNECTION_STRING"))
+(define db/ddl-file-path (or (getenv "REFORMER_DB_DDL_FILE_PATH") "src/ddl.sql"))
 (define libpq (dynamic-link (getenv "PSQL_LIBRARY_PATH")))
-
-(define db/psql-connection-string (getenv "PSQL_CONNECTION_STRING"))
 
 (define (psql/open connection-string)
   ((pointer->procedure
                    '*
                    (dynamic-func "PQconnectdb" libpq)
                    (list '*)) (string->pointer connection-string)))
+
+(define (db/test)
+  (format #t "psql/db/test - NOT IMPLEMENTED~%"))
+
+(define* (db/query db query
+				   #:key
+				   (parameters '())
+				   (indexed #t)
+				   (row-handler identity))
+		 (format #t "psql/db/query - NOT IMPLEMENTED~%"))
+
+(define (db/close db)
+  "TODO: Migrate to PSQL"
+  (format #t "Closing the database...~%")
+  (sqlite-close db)
+  (format #t "Closed the database!~%"))
+
+(define (db/open connection-string)
+  "TODO: Migrate to PSQL"
+  (format #t "Bringing up the ~s database...~%" connection-string)
+  (let* ((db (psql/open connection-string)))
+    (format #t "Database is running: ~a -> ~%" db)
+    db))
+
+(define-syntax-rule (db/with (db-binding db-path) body ...)
+  "TODO: Migrate to PSQL"
+  (let ((db-binding (db/open db-path)))
+    (let ((result (begin body ...)))
+      (db/close db-binding)
+      result)))
+
+(define (db/test)
+   (db/with (db db/test-connection-string)
+     (db/query db
+               "CREATE TABLE IF NOT EXISTS foo (id INTEGER PRIMARY KEY, bar STRING)")
+     (db/query db
+               "DELETE FROM foo")
+     (db/query db
+               "INSERT INTO foo ('bar') VALUES ('something')")
+     (db/query db
+               "SELECT * FROM foo WHERE :column > :threshold"
+               #:parameters '((column . id)
+                              (threshold . 0))
+               #:indexed #t
+               #:row-handler identity)))
+
+
 
 ;; DOCS: https://doxygen.postgresql.org/structpg__conn.html#pub-attribs
 ;; char * 	pghost
@@ -154,54 +205,6 @@
 ;; PQExpBufferData 	errorMessage
 ;; int 	errorReported
 ;; PQExpBufferData 	workBuffer
-
-(define (db/close db)
-  "TODO: Migrate to PSQL"
-  (format #t "Closing the database...~%")
-  (sqlite-close db)
-  (format #t "Closed the database!~%"))
-
-(define (db/open connection-string)
-  "TODO: Migrate to PSQL"
-  (format #t "Bringing up the ~s database...~%" connection-string)
-  (let* ((db (psql/open connection-string)))
-    (format #t "Database is running: ~a -> ~%" db)
-    db))
-
-(define* (db/query db query
-				   #:key
-				   (parameters '())
-				   (indexed #t)
-				   (row-handler identity))
-		 (if (or (null? parameters) (not parameters))
-		     (sqlite-exec db query)
-			 (sqlite-exec* db query
-						   #:parameters parameters
-						   #:indexed indexed
-						   #:row-handler row-handler)))
-
-(define-syntax-rule (db/with (db-binding db-path) body ...)
-  "TODO: Migrate to PSQL"
-  (let ((db-binding (db/open db-path)))
-    (let ((result (begin body ...)))
-      (db/close db-binding)
-      result)))
-
-(define (db/test)
-  "TODO: Migrate to PSQL")
-  ; (db/with (db db/sqlite-test-db-path)
-  ;   (db/query db
-  ;             "CREATE TABLE IF NOT EXISTS foo (id INTEGER PRIMARY KEY, bar STRING)")
-  ;   (db/query db
-  ;             "DELETE FROM foo")
-  ;   (db/query db
-  ;             "INSERT INTO foo ('bar') VALUES ('something')")
-  ;   (db/query db
-  ;             "SELECT * FROM foo WHERE :column > :threshold"
-  ;             #:parameters '((column . id)
-  ;                            (threshold . 0))
-  ;             #:indexed #t
-  ;             #:row-handler identity)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;
 ;; CONNECTION - PSQL ;;
@@ -556,6 +559,8 @@
 	dbi-query
 	dbi-get_row
 	dbi-get_status)
+
+
 
 (begin
   ;; TODO: Make this a little more ergonomic
