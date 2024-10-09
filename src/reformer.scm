@@ -2,9 +2,8 @@
   #:export (cfrr))
 
 (use-modules (pipe)
-			 (reformer config)
+			       (reformer config)
              (reformer db)
-             ;; (reformer db sqlite)
              (reformer routing)
              (reformer models)
              (oop goops)
@@ -17,21 +16,33 @@
   (db/test)
   (format #t "Database testing is complete~%")
   (db/with (db db/connection-string)
-		   (db/apply-ddl db)
-		   ;; TODO: Install [guile-gcrypt](https://notabug.org/cwebber/guile-gcrypt) and hash the password
-		   (user/save (make-instance <user>
-									 #:id #f
-									 #:handle "jamesaorson"
-									 #:password-hash "myman") db)
-		   (user/save (make-instance <user>
-									 #:id #f
-									 #:handle "nbarlow"
-									 #:password-hash "myguy") db)
-		   ;; TODO: Get id from save
-		   (post/save (make-instance <post> #:id #f #:content "Hey <marquee><strong>dude</strong></marquee>, what's the Lord working in you today?" #:user-id 1) db)
-		   (post/save (make-instance <post> #:id #f #:content "Something big and similar to a bean burrito" #:user-id 2) db)
-		   (post/save (make-instance <post> #:id #f #:content "<a href=\"https://letmegooglethat.com/\">Use this coding tutor</a>" #:user-id 1) db)
-		   (post/save (make-instance <post> #:id #f #:content "This might be rude, lewd, and obnoxious. <script>setTimeout(function() {window.alert('haha got you!')}, 5000)</script>" #:user-id 1) db))
+		       (db/apply-ddl db)
+		       ;; TODO: Install [guile-gcrypt](https://notabug.org/cwebber/guile-gcrypt) and hash the password
+		       (user/save (make-instance <user>
+									                   #:id #f
+									                   #:handle "jamesaorson"
+									                   #:password-hash "myman") db)
+		       (user/save (make-instance <user>
+									                   #:id #f
+									                   #:handle "nbarlow"
+									                   #:password-hash "myguy") db)
+		       ;; TODO: Get id from save
+		       (post/save (make-instance <post>
+                                     #:id #f
+                                     #:content "Hey <marquee><strong>dude</strong></marquee>, what's the Lord working in you today?"
+                                     #:user-id 1) db)
+		       (post/save (make-instance <post>
+                                     #:id #f
+                                     #:content "Something big and similar to a bean burrito"
+                                     #:user-id 2) db)
+		       (post/save (make-instance <post>
+                                     #:id #f
+                                     #:content "<a href=\"https://letmegooglethat.com/\">Use this coding tutor</a>"
+                                     #:user-id 1) db)
+		       (post/save (make-instance <post>
+                                     #:id #f
+                                     #:content "This might be rude, lewd, and obnoxious. <script>setTimeout(function() {window.alert('haha got you!')}, 5000)</script>"
+                                     #:user-id 1) db))
   (db/open db/connection-string))
 
 (define (fall db)
@@ -58,7 +69,7 @@
 
 (define (cfrr)
   (-> (creation)
-	  (fall)
-	  (redemption)
-	  (restoration)))
+	    (fall)
+	    (redemption)
+	    (restoration)))
 
