@@ -45,8 +45,8 @@
              (post/save (make-instance <post>
                                        #:id #f
                                        #:content "This might be rude, lewd, and obnoxious. <script>setTimeout(function() {window.alert(`haha got you!`)}, 5000)</script>"
-                                       #:poster-id 1) db))
-    (db/open db/connection-string)))
+                                       #:poster-id 1) db)))
+    (db/open db/connection-string))
 
 (define (fall db)
   "Sets up login and identity management systems"
