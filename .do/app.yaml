@@ -21,3 +21,17 @@ services:
   source_dir: /
   http_port: 80
   dockerfile_path: Dockerfile
+envs:
+- key: DB_IMPLEMENTATION
+  value: psql
+  scope: RUN_AND_BUILD_TIME
+  type: GENERAL
+- key: REFORMER_CONNECTION_STRING
+  value: EV[1:Rv5PgW+VQkxyt1mqAG/x2Ht9M+OTbWQG:OWrJbwVIHcEzuh4un3FKZJUXh1b8NrUeRDewRfk5339U6TpawyAStGc1xOatv7LPvdraty00EzAxMRhEsvXyfIoYfZ8ZNcUA+IdGgjGhE4aNeCVBvaMqSO5xt+7Qrl7S7ZF8A9/efsOvLEvxDW5XlRxI6SeMlJoyENKNqGw=]
+  scope: RUN_AND_BUILD_TIME
+  type: SECRET
+- key: REFORMER_TEST_CONNECTION_STRING
+  value: V[1:Rv5PgW+VQkxyt1mqAG/x2Ht9M+OTbWQG:OWrJbwVIHcEzuh4un3FKZJUXh1b8NrUeRDewRfk5339U6TpawyAStGc1xOatv7LPvdraty00EzAxMRhEsvXyfIoYfZ8ZNcUA+IdGgjGhE4aNeCVBvaMqSO5xt+7Qrl7S7ZF8A9/efsOvLEvxDW5XlRxI6SeMlJoyENKNqGw=]
+  scope: RUN_AND_BUILD_TIME
+  type: SECRET
+
