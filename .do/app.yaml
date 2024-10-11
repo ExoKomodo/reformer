@@ -12,7 +12,7 @@ name: reformer
 region: sfo
 services:
 - github:
-    branch: guile-dbi
+    branch: main
     deploy_on_push: true
     repo: ExoKomodo/reformer
   instance_count: 1
