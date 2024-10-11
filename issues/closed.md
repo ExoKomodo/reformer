@@ -224,3 +224,24 @@ Be able to create posts in a simple form
 ### Acceptance Criteria
 
 User should be able to create a new post, with a user
+
+## Migrate from guile-sqlite to guile-dbi
+
+### Branch - [guile-dbi](https://git.sr.ht/~jamesaorson/reformer/tree/guile-dbi)
+
+### Overview
+
+Reformer needs to support more than one DB backend. Initially, supporting SQLite and PSQL will be most necessary.
+
+Just create your own
+
+### Instructions
+
+Install [`guile-dbi`](https://github.com/opencog/guile-dbi) to the project. If at all possible, provide the source code
+of this library natively in the codebase. If necessary to build the code first in some way, then introduce it as a git
+submodule and provide a `make` target for dealing with library compilations.
+
+### Acceptance Criteria
+
+- replace `guile-sqlite` with `guile-dbi`
+- if necessary to build `guile-dbi`, add a `make build-libs` target
