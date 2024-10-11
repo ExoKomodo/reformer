@@ -14,38 +14,39 @@
   (format #t "Testing the database...~%")
   (db/test)
   (format #t "Database testing is complete~%")
-  (db/with (db db/connection-string)
-		       (db/apply-ddl db)
-		       ;; TODO: Install [guile-gcrypt](https://notabug.org/cwebber/guile-gcrypt) and hash the password
-           (format #t "Hello?~%")
-		       (user/create (make-instance <user>
-									                     #:id 1
-									                     #:handle "jamesaorson"
-									                     #:password-hash "myman") db)
-		       (user/create (make-instance <user>
-									                     #:id 2
-									                     #:handle "nbarlow"
-									                     #:password-hash "myguy") db)
-		       ;; TODO: Get id from save
-		       (post/save (make-instance <post>
-                                     #:id #f
-                                     #:content "Hey <marquee><strong>dude</strong></marquee>, what is the Lord working in you today?"
-                                     #:poster-id 1) db)
-		       (post/save (make-instance <post>
-                                     #:id #f
-                                     #:content "Something big and similar to a bean burrito"
-                                     #:poster-id 2) db)
+  (when (string=? db-implementation "sqlite")
+    (db/with (db db/connection-string)
+             (db/apply-ddl db)
+             ;; TODO: Install [guile-gcrypt](https://notabug.org/cwebber/guile-gcrypt) and hash the password
+             (format #t "Hello?~%")
+             (user/create (make-instance <user>
+                                         #:id 1
+                                         #:handle "jamesaorson"
+                                         #:password-hash "myman") db)
+             (user/create (make-instance <user>
+                                         #:id 2
+                                         #:handle "nbarlow"
+                                         #:password-hash "myguy") db)
+             ;; TODO: Get id from save
+             (post/save (make-instance <post>
+                                       #:id #f
+                                       #:content "Hey <marquee><strong>dude</strong></marquee>, what is the Lord working in you today?"
+                                       #:poster-id 1) db)
+             (post/save (make-instance <post>
+                                       #:id #f
+                                       #:content "Something big and similar to a bean burrito"
+                                       #:poster-id 2) db)
 
-           (format #t "Again?~%")
-		       (post/save (make-instance <post>
-                                     #:id #f
-                                     #:content "<a href=\"https://letmegooglethat.com/\">Use this coding tutor</a>"
-                                     #:poster-id 1) db)
-		       (post/save (make-instance <post>
-                                     #:id #f
-                                     #:content "This might be rude, lewd, and obnoxious. <script>setTimeout(function() {window.alert(`haha got you!`)}, 5000)</script>"
-                                     #:poster-id 1) db))
-  (db/open db/connection-string))
+             (format #t "Again?~%")
+             (post/save (make-instance <post>
+                                       #:id #f
+                                       #:content "<a href=\"https://letmegooglethat.com/\">Use this coding tutor</a>"
+                                       #:poster-id 1) db)
+             (post/save (make-instance <post>
+                                       #:id #f
+                                       #:content "This might be rude, lewd, and obnoxious. <script>setTimeout(function() {window.alert(`haha got you!`)}, 5000)</script>"
+                                       #:poster-id 1) db))
+    (db/open db/connection-string)))
 
 (define (fall db)
   "Sets up login and identity management systems"
