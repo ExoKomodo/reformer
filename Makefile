@@ -4,7 +4,7 @@ UNAME_M := $(shell uname -m)
 ENTRYPOINT := src/init.scm
 
 CWD := $(shell pwd)
-LIB_DIR := $(CWD)/lib
+LIB_DIR := $(CWD)/lib/src
 SOURCE_DIR := $(CWD)/src
 GUILE_ARGS := -L $(LIB_DIR) -L $(SOURCE_DIR)
 
@@ -12,14 +12,17 @@ INIT_SOURCES := $(wildcard src/*.scm)
 
 SOURCES := $(wildcard src/reformer/*.scm)
 
-SQLITE_LIBRARY_PATH ?= libsqlite3
+export SQLITE_LIBRARY_PATH ?= libsqlite3
+export PSQL_LIBRARY_PATH ?= libpq
+export DB_IMPLEMENTATION ?= sqlite
+export REFORMER_CONNECTION_STRING ?= postgresql://[user[:password]@][netloc][:port]
+export REFORMER_TEST_CONNECTION_STRING ?= postgresql://[user[:password]@][netloc][:port]
 
 .ONESHELL:
 
 ##@ Project
 .PHONY: run
 run: $(INIT_SOURCES) $(SOURCES) ## Run the project. Assumes setup is complete.
-	export SQLITE_LIBRARY_PATH=$(SQLITE_LIBRARY_PATH); \
 	guile \
 		$(GUILE_ARGS) \
 		-s \
@@ -31,12 +34,22 @@ run-on-server: setup-systemd lb ## Run the project as a systemd service
 .PHONY: run-with-repl
 run-with-repl: REPL_PORT ?= 1689
 run-with-repl: $(INIT_SOURCES) $(SOURCES) ## Run the project with a REPL server exposed
-	export SQLITE_LIBRARY_PATH=$(SQLITE_LIBRARY_PATH); \
 	guile \
 		$(GUILE_ARGS) \
 		--listen=$(REPL_PORT) \
 		-s \
 			$(ENTRYPOINT)
+
+.PHONY: test
+test: $(INIT_SOURCES) $(SOURCES)
+	echo "Test...TODO"; \
+	pid_file=$(shell mktemp); \
+	($(MAKE) run &); \
+	sleep 2; \
+	curl \
+		--fail \
+		-X GET \
+		http://0.0.0.0:8080/;
 
 .PHONY: setup-lb
 setup-lb: ## Sets up the LB and syncs static content. Needs root access.
@@ -98,31 +111,39 @@ setup-apt: ## Install packages via APT
 	fi; \
 	apt-get install -y \
 		nginx \
+		libpq-dev \
 		libsqlite3-dev \
-		sqlite3
+		libtool \
+		sqlite3;
+
 .PHONY: setup-brew
 setup-brew: ## Install packages via Homebrew (https://brew.sh)
 	brew install \
 		guile \
+		libpq \
 		nginx \
 		sqlite; \
 	brew link \
 		--force \
-		sqlite
+		--overwrite \
+		libpq \
+		sqlite;
+
 .PHONY: setup-dnf
 setup-dnf: ## Install packages via DNF
 	dnf install -y \
 		guile \
 		nginx \
 		sqlite \
-		sqlite-devel
+		sqlite-devel;
+
 .PHONY: setup-pacman
 setup-pacman: ## Install packages via Pacman
 	pacman -S \
 		guile \
-	  	nginx \
+		nginx \
 		sqlite \
-		sqlite-devel
+		sqlite-devel;
 
 ##@ REPL
 
@@ -186,7 +207,6 @@ container-build-aarch64: container-build-arm64
 container-build-arm: container-build-arm64
 
 .PHONY: container-run
-container-run:
 container-run: ## Runs the container
 	docker run -it \
 		-p 80:80 \

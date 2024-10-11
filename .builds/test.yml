@@ -1,0 +1,16 @@
+image: debian/bookworm
+arch: amd64
+packages:
+- curl
+- make
+- sudo
+tasks:
+- clone-submodules: |-
+    cd reformer
+    git submodule update --init --recursive
+- setup: |-
+    cd reformer
+    sudo make setup-apt
+- test: |-
+    cd reformer
+    make test

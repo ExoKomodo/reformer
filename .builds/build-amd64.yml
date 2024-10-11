@@ -1,7 +1,8 @@
-image: alpine/latest
+image: debian/bookworm
+arch: amd64
 packages:
-- docker
-- openrc
+- ca-certificates
+- curl
 - sudo
 secrets:
 # dockerhub access token
@@ -12,18 +13,29 @@ environment:
   IMAGE_TAG: latest
   USERNAME: exokomodo
 tasks:
+- clone-submodules: |-
+    cd reformer
+    git submodule update --init --recursive
 - docker-setup: |-
-    sudo rc-service cgroups start
-    if [[ ${CRI} == *'docker' ]]; then
-      sudo service docker start
-      sleep 1
-    fi
-    sleep 1
+    sudo install -m 0755 -d /etc/apt/keyrings
+    sudo curl -fsSL https://download.docker.com/linux/debian/gpg -o /etc/apt/keyrings/docker.asc
+    sudo chmod a+r /etc/apt/keyrings/docker.asc
+
+    # Add the repository to Apt sources:
+    echo \
+      "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/debian \
+      $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+      sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+    sudo apt-get update
+
+    sudo apt-get install -y \
+      docker-ce \
+      docker-ce-cli \
+      containerd.io \
+      docker-buildx-plugin
+      # docker-compose-plugin
 - system-check: |-
     ${CRI} --version
-    if [[ ${CRI} == *'docker' ]]; then
-      sudo service docker status
-    fi
 - login: |
     cat ~/dockerhub-access-token | ${CRI} login docker.io \
       --username ${USERNAME} \
@@ -38,7 +50,7 @@ tasks:
     if [ "${GIT_REF}" = "refs/heads/main" ]; then
       ADDITIONAL_CONTAINER_BUILD_ARGS="--tag ${USERNAME}/reformer:latest"
     fi
-    sudo make container-build \
+    sudo make container-build-amd64 \
       CONTAINER_TAG=${CONTAINER_TAG} \
       ADDITIONAL_CONTAINER_BUILD_ARGS="${ADDITIONAL_CONTAINER_BUILD_ARGS}"
 - push: |-
