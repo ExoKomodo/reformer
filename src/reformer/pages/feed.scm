@@ -17,7 +17,7 @@
 			 `(div
 				,(xml->sxml (format #f "<p>~a</p>" (post/content post)))
 				(h5 ,(format #f "~~~a" (user/handle (user/read-by-id db
-																	 (post/poster-id post)))))))
+																	 (post/user-id post)))))))
 		   posts)))
 
 (define (feed/index db)
@@ -30,8 +30,8 @@
 			  ,(feed/post-list loaded-posts db))
 		 (div (@ (style "float: right"))
 			  (form (div (h3 "Make a post!"))
-					(div (label (@ (for "password")) "First, enter your password...")
-						 (div (input (@ (type "password") (name "password")))))
+					(div (label (@ (for "handle")) "First, enter your handle...")
+						 (div (input (@ (type "handle") (name "handle")))))
 					(div (label (@ (for "content")) "Now, what do you want to say to the body?")
 						 (div (textarea (@ (name "content")) "")))
 					(button (@ (hx-post "/post")

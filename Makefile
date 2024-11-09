@@ -12,11 +12,14 @@ INIT_SOURCES := $(wildcard src/*.scm)
 
 SOURCES := $(wildcard src/reformer/*.scm)
 
+export DEBIAN_FRONTEND ?= noninteractive
 export SQLITE_LIBRARY_PATH ?= libsqlite3
 export PSQL_LIBRARY_PATH ?= libpq
 export DB_IMPLEMENTATION ?= sqlite
 export REFORMER_CONNECTION_STRING ?= postgresql://[user[:password]@][netloc][:port]
 export REFORMER_TEST_CONNECTION_STRING ?= postgresql://[user[:password]@][netloc][:port]
+export REFORMER_MAIL_PASSWORD ?= "GIVE MEMY 16DI GITS"
+export GUILE_AUTO_COMPILE ?= fresh
 
 .ONESHELL:
 
@@ -41,15 +44,15 @@ run-with-repl: $(INIT_SOURCES) $(SOURCES) ## Run the project with a REPL server 
 			$(ENTRYPOINT)
 
 .PHONY: test
-test: $(INIT_SOURCES) $(SOURCES)
-	echo "Test...TODO"; \
-	pid_file=$(shell mktemp); \
-	($(MAKE) run &); \
-	sleep 2; \
-	curl \
-		--fail \
-		-X GET \
-		http://0.0.0.0:8080/;
+test: test/auth
+
+.PHONY: test/auth
+test/auth: $(INIT_SOURCES) $(SOURCES) test/test-auth.scm
+	@echo "Testing auth"; \
+	guile \
+		$(GUILE_ARGS) \
+		-s \
+			$(shell pwd)/test/test-auth.scm
 
 .PHONY: setup-lb
 setup-lb: ## Sets up the LB and syncs static content. Needs root access.
@@ -110,17 +113,21 @@ setup-apt: ## Install packages via APT
 		apt-get install -y guile; \
 	fi; \
 	apt-get install -y \
-		nginx \
+		fetchmail \
 		libpq-dev \
 		libsqlite3-dev \
 		libtool \
+		msmtp \
+		nginx \
 		sqlite3;
 
 .PHONY: setup-brew
 setup-brew: ## Install packages via Homebrew (https://brew.sh)
 	brew install \
+		fetchmail \
 		guile \
 		libpq \
+		msmtp \
 		nginx \
 		sqlite; \
 	brew link \
@@ -132,7 +139,9 @@ setup-brew: ## Install packages via Homebrew (https://brew.sh)
 .PHONY: setup-dnf
 setup-dnf: ## Install packages via DNF
 	dnf install -y \
+		fetchmail \
 		guile \
+		msmtp \
 		nginx \
 		sqlite \
 		sqlite-devel;
@@ -140,7 +149,9 @@ setup-dnf: ## Install packages via DNF
 .PHONY: setup-pacman
 setup-pacman: ## Install packages via Pacman
 	pacman -S \
+		fetchmail \
 		guile \
+		msmtp \
 		nginx \
 		sqlite \
 		sqlite-devel;
@@ -227,6 +238,14 @@ container-push-all: ## Pushes all container tags
 		--all-tags \
 		$(CONTAINER_NAME) \
 		$(ADDITIONAL_CONTAINER_PUSH_ARGS)
+
+##@ Helpers
+
+.PHONY: clean
+clean: ## Cleans all built files from the repo
+	rm -f reformer.db; \
+	rm -f test.db; \
+	rm -rf ~/.cache/guile/ccache;
 
 ##@ Help
 

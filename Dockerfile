@@ -3,6 +3,8 @@ ARG IMAGE_NAME=debian
 
 FROM ${IMAGE_NAME}:12-slim
 
+ENV DEBIAN_FRONTEND=noninteractive
+
 RUN apt-get update -y \
     && apt-get install -y \
     curl \

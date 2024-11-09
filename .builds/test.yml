@@ -4,13 +4,17 @@ packages:
 - curl
 - make
 - sudo
+secrets:
+# reformer-mail-password
+- 8d3f62dd-5078-41cc-b356-fc3db338cbb6
 tasks:
 - clone-submodules: |-
     cd reformer
     git submodule update --init --recursive
 - setup: |-
     cd reformer
-    sudo make setup-apt
+    sudo make setup
 - test: |-
     cd reformer
+    export REFORMER_MAIL_PASSWORD=$(cat ~/.reformer-mail-password)
     make test

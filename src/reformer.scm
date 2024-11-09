@@ -1,13 +1,14 @@
-(define-module (reformer)
-  #:export (cfrr))
+(define-module (reformer))
 
-(use-modules (pipe)
+(use-modules (ice-9 format)
+             (pipe)
 			       (reformer config)
              (reformer db)
              (reformer routing)
              (reformer models)
              (oop goops)
              (web server))
+
 (define (creation)
   "Sets up the storage engine for Reformer"
   (format #t "Setting up creation~%")
@@ -18,7 +19,6 @@
     (db/with (db db/connection-string)
              (db/apply-ddl db)
              ;; TODO: Install [guile-gcrypt](https://notabug.org/cwebber/guile-gcrypt) and hash the password
-             (format #t "Hello?~%")
              (user/create (make-instance <user>
                                          #:id 1
                                          #:handle "jamesaorson"
@@ -31,22 +31,16 @@
              (post/save (make-instance <post>
                                        #:id #f
                                        #:content "Hey <marquee><strong>dude</strong></marquee>, what is the Lord working in you today?"
-                                       #:poster-id 1) db)
+                                       #:user-id 1) db)
              (post/save (make-instance <post>
                                        #:id #f
                                        #:content "Something big and similar to a bean burrito"
-                                       #:poster-id 2) db)
-
-             (format #t "Again?~%")
+                                       #:user-id 2) db)
              (post/save (make-instance <post>
                                        #:id #f
                                        #:content "<a href=\"https://letmegooglethat.com/\">Use this coding tutor</a>"
-                                       #:poster-id 1) db)
-             (post/save (make-instance <post>
-                                       #:id #f
-                                       #:content "This might be rude, lewd, and obnoxious. <script>setTimeout(function() {window.alert(`haha got you!`)}, 5000)</script>"
-                                       #:poster-id 1) db)))
-    (db/open db/connection-string))
+                                       #:user-id 1) db)))
+  (db/open db/connection-string))
 
 (define (fall db)
   "Sets up login and identity management systems"
@@ -70,7 +64,7 @@
             #:port ,port))
   db)
 
-(define (cfrr)
+(define-public (cfrr)
   (-> (creation)
 	    (fall)
 	    (redemption)
