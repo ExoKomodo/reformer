@@ -23,6 +23,8 @@
                                          #:id 1
                                          #:handle "jamesaorson"
                                          #:password-hash "myman") db)
+             (let ([jamesaorson (user/get-user-by-handle db "jamesaorson")])
+               (user/auth/send-code jamesaorson (user/auth/generate-code jamesaorson)))
              (user/create (make-instance <user>
                                          #:id 2
                                          #:handle "nbarlow"

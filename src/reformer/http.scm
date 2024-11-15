@@ -31,8 +31,14 @@
 
 (define* (http/build-simple-response #:optional body
                                      #:key
-                                     (status 200))
-  (values (build-response #:code status)
+                                     (status 200)
+                                     (content-type-params '((charset . "utf-8")))
+                                     (content-type 'text/plain)
+                                     (extra-headers '()))
+  (values (build-response #:code status
+                          #:headers `((content-type
+                                       . (,content-type ,@content-type-params))
+                                      ,@extra-headers))
           body))
 
 (define* (http/build-html-response #:optional body
